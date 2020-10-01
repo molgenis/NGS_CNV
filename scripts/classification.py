@@ -1,10 +1,11 @@
 import os
 import argparse
 
-from probe import Probe
-from exon import Exon
-from cnv import Cnv
-from arraycnv import ArrayCnv
+# Import required classes
+from classes.probe import Probe
+from classes.exon import Exon
+from classes.cnv import Cnv
+from classes.arraycnv import ArrayCnv
 
 
 def main(cmd_argvalues):
