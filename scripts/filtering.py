@@ -10,6 +10,9 @@ from classes.exon import Exon
 from classes.gatkcall import GatkCall
 from classes.umcgcommoncnv import UmcgCommonCnv
 
+# Import parameters scripts
+import parameters.parameters as parpar
+
 # Import util scripts
 import utils.filereaders as ufr
 
@@ -30,12 +33,15 @@ PARAM_TYPES = {"infile": "inputfile",
                "conradfile",: "inputfile",}
                "exonfile",: "inputfile",}
                "commoncnvs",: "inputfile"}
+TOOL_USAGE = {"ccnvfiltering": "python filtering.py -t ccnvfiltering -u commoncnvs.txt -i cnv_classifications.txt -o filtered_ccnv_classifications.txt",
+              "conradfiltering": "python filtering.py -t conradfiltering -c cornad_cnvs.txt -e exons.bed -i cnv_classifications.txt -o filtered_cnv_classifications.txt",
+              "nafitlering": "python filtering.py -t nafiltering -i cnv_classifications.txt -o nafiltered_cnv_classifications.txt"}
 
 
 def main():
-    filterparams = get_params()
-    missingparams = required_params_set(filterparams["tool"], filterparams)
-    if len(missingparams) == 0:
+    filterparams = parpar.get_filtering_parameters(TOOL_CHOICES)
+    incorrect_params = parpar.parameters_are_ok(filterparams, REQUIRED_PARAMS, PARAM_TYPES)
+    if len(incorrect_params) == 0:
         # Perform filtering with a Common CNV list.
         if filterparams["tool"] == "ccnvfiltering":
             ccnvdata = ufr.read_umcg_common_cnv_file(filterparams["commoncnvs"])
@@ -54,76 +60,8 @@ def main():
         if filterparams["tool"] == "nafiltering":
             fnar.remove_nas(filterparams["infile"], filterparams["outfile"])
     else:
-        print(f"Missing parameters {missingparams}")
-
-
-def get_params():
-    """Define and return set CLI parameter values.
-
-    Returns
-    -------
-    dict
-        CLI set parameter values
-    """
-    filter_args = argparse.ArgumentParser()
-    filter_args.add_argument("-t", "--tool", dest="tool", type=str, choices=TOOL_CHOICES, help="Type of filtering to perform")
-    filter_args.add_argument("-i", "--infile", dest="infile", type=str, help="Path to input file")
-    filter_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to output file")
-    filter_args.add_argument("-c", "--conradfile", dest="conradfile", type=str, help="Path to file with Conrad CNVs")
-    filter_args.add_argumemt("-e", "--exonfile", dest="exonfile", type=str, help="Path to exon BED file")
-    filter_args.add_argument("-u", "--commoncnvs", dest="commoncnvs", type=str, help="Path to file with Common CNVs")
-    return vars(filter_args.parse_args())
-
-
-def required_params_set(tooltouse, filterparams):
-    """Check if all required parameters are set.
-
-    Parameters
-    ----------
-    tooltouse : str
-        Specific filtering to perform
-    filterparams : dict
-        All set parameter values
-    """
-    missing_parameters = []
-    if tooltouse not in REQUIRED_PARAMS:
-        print("No valid tool selected")
-        missing_parameters.append("tool")
-    else:
-        for paramname in REQUIRED_PARAMS[tooltouse]:
-            if filterparams[paramname] is None:
-                missing_parameters.append(paramname)
-    return missing_parameters
-
-
-def params_are_ok(paramvalues):
-    """Check if parameters are set and are ok.
-
-    Parameters
-    ----------
-    paramvalues : dict
-        Set parameter values to check
-
-    Returns
-    -------
-    incorrect_parameters : list of str
-        Names of not set or incorrect parameters ; empty list if everything is ok
-    """
-    incorrect_parameters = []
-    missing_parameters = required_params_set(paramvalues["tool"], paramvalues)
-
-    if len(missing_parameters) == 0:
-        for paramname in REQUIRED_PARAMS[paramvalues["tool"]]:
-            if PARAM_TYPES[paramname] == "inputfile":
-                if not os.path.isfile(paramvalues[paramname]):
-                    incorrect_parameters.append(paramname)
-            elif PARAM_TYPES[paramname] == "outputfile":
-                outputdir = "/".join(paramvalues[paramname].split("/")[0:-1])
-                if not os.path.isdir(outputdir):
-                    incorrect_parameters.append(paramname)
-    else:
-        incorrect_parameters.extend(missing_parameters)
-    return incorrect_parameters
+        print(f"Missing parameters {incorrect_params}")
+        parpar.display_tool_usage(filterparams["tool"], TOOL_USAGE)
 
 
 if __name__ == "__main__":

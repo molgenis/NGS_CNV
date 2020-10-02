@@ -23,6 +23,10 @@ PARAM_TYPES = {"infile": "inputfile",
                "arrayfile": "inputfile",
                "outfile": "outputfile",
                "outprefix": "string"}
+TOOL_USAGE = {"arraycnv": "python totals.py -t arraycnv -i cnv_classifications.txt -a arraycnvdata.txt",
+              "classification": "python totals.py -t classification -i cnv_classifications.txt -o /path/to/outdir -op prefixname",
+              "numofcalls": "python totals.py -t numofcalls -i cnv_classifications.txt",
+              "numofna": "python totals.py -t numofna -i cnv_classifications.txt"}
 
 
 def main():
@@ -30,6 +34,7 @@ def main():
     if parpar.parameters_are_ok(totalsparams, REQUIRED_PARAMS, PARAM_TYPES):
         if totalsparams["tool"] == "arraycnv":
             
+        # Gather the totals per classification label
         if totalsparams["tool"] == "classification":
 
         # Gather the total number of GATK4 Calls

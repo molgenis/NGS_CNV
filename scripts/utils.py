@@ -2,6 +2,9 @@ import os
 import sys
 import argparse
 
+# Import parameter scripts
+import parameters.parameters as parpar
+
 # Import util scripts
 import utils.filereaders as ufr
 import utils.filewriters as ufw
@@ -18,13 +21,26 @@ REQUIRED_ARGS = {"filterxy": ["intervallist", "outfile"],
                  "getsnplog2ratios": ["allelicfile", "intervallist", "outfile"],
                  "selectplotregion": ["intervallist", "outfile", "padding", "region"]}
 OPTIONAL_ARGS = {}
+PARAM_TYPES = {"infile": "inputfile",
+               "allelicfile": "inputfile",
+               "intervallist": "inputfile",
+               "intype": "string",
+               "outfile": "outputfile",
+               "region": "string",
+               "padding": "integer"}
 XY_CHROMS = ("X", "x", "Y", "y", "chrX", "chrx", "chrY", "chry")
 INTYPE_CHOICES = ["cac", "tsv", "seg"]
+TOOL_USAGE = {"filterxy": "python utils.py -il intervallist.txt -o no_xy_intervallist.txt",
+              "fixarray": "python utils.py -i cnv_classifications.txt -o fixedcnv_classifications.txt",
+              "getsnplog2ratios": "python utils.py -al allelicratios.csv -il intervallist.txt -o snplog2ratios.txt",
+              "selectplotregion": "python utils.py -il intervallist.txt -o region_interval_data.txt -p 1000 -r chr1:100-1000",}
 
 
 def main():
-    utilparams = get_params()
-    if params_are_ok(utilparams):
+    utilparams = parpar.get_util_parameters()
+    incorrectparams = parpar.parameters_are_ok(utilparams, REQUIRED_PARAMS, PARAM_TYPES)
+
+    if len(incorrectparams) == 0:
         # Filter X and Y chromosomes from an interval list file
         if utilparams["tool"] == "filterxy":
             ufxyfi.filter_intervallist(utilparams["intervallist"], utilparams["outfile"])
@@ -51,59 +67,9 @@ def main():
             allelicdata = ufr.read_allelic_data(utilparams["allelicfile"])
             intervaldata = ufr.read_interval_data(utilparams["intervallist"])
             ugsl2r.collect_allelic_log2_values(allelicdata, intervaldata, utilparams["outfile"])
-
-
-def get_params():
-    """Define and receive CLI set parameters.
-    
-    Returns
-    -------
-    dict
-        Set parameter values
-    """
-    util_args = argparse.ArgumentParser()
-    util_args.add_argument("-t", "--tool", dest="tool", type=str, choices=TOOL_CHOICES, required=True, help="Specified util/tool to run")
-    util_args.add_argument("-i", "--infile", dest="infile", type=str, help="Path to non interval or allelic input file")
-    util_args.add_argument("-al", "--allelicfile", dest="allelicfile", type=str, help="Path to GATK4 allelic interval file")
-    util_args.add_argument("-il", "--intervallist", dest="intervallist", type=str, help="Path to intervallist file")
-    util_args.add_argument("-it", "--intype", dest="intype", type=str, required=False, choices=INTYPE_CHOICES, help="Input file type")
-    util_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to output file")
-    util_args.add_argument("-r", "--region", dest="region", nargs="+", type=str, help="Region(s) to use.")
-    util_args.add_argument("-p", "--padding", dest="padding", default=10000, type=int, help="Amount of padding to add left and right of region(s)")
-    return vars(util_args.parse_args())
-
-
-def required_params_set(tooltouse, utilparamvals):
-    """Check and return whether the tool required parameters are set.
-
-    Parameters
-    ----------
-    tooltouse : str
-        Specific tool to run
-    utilparamvals : dict
-        Set parameter values
-
-    Returns
-    -------
-    list of str
-        Empty list if all parameters are set ; list with missing parameter names otherwise
-    """
-    missingparams = []
-    for paramname in REQUIRED_ARGS[tooltouse]:
-        if utilparamvals[paramval] is None:
-            missingparams.append(paramname)
-    return missingparams
-
-
-def params_are_ok(argvalues):
-    mising_parameters = required_params_set(argvalues["tool"], argvalues)
-    if len(missing_parameters) > 0:
-        print(f"Missing parameters {missing_parameters}")
-        return False
-    
-    # Perform further parameter checking (such as file exists)
-    
-    return True
+    else:
+        print(f"The following parameters are incorrect: {incorrectparams}")
+        parpar.display_tool_usage(utilparams["tool"], TOOL_USAGE)
 
 
 if __name__ == "__main__":

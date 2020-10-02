@@ -68,3 +68,41 @@ def write_cac_output_file(outfilepath, intervaldata):
                     outfile.write(f"{overlapinterval}\t{region}\t{intervallabel}\n")
     except IOError:
         print(f"Could not write to output file {outfilepath}")
+
+
+def write_missedfound_arraycnvs(missedfound_arraycnvs, outfileloc):
+    file_written = False
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Sample\tArray_CNV\t#_Probes\n")
+            for samplename in missedfound_arraycnvs:
+                for mfa_cnv in missedfound_arraycnvs[samplename]:
+                    outfile.write(f"{samplename}\t{mfa_cnv.get_region()}\t{mfa_cnv.num_of_probes()}\n")
+        file_written = True
+    except IOError:
+        print(f"Could not write missed/found array cnv data to output file: {outfileloc}")
+    finally:
+        return file_written
+
+
+def write_missedfound_summary(missedfound_summary, outfileloc):
+    """Write the summary data for missed/found array CNVs.
+
+    Parameters
+    ----------
+    missedfound_summary : dict
+        Missed/Found summary data to write
+    outfileloc: str
+        Path to write output file to
+    """
+    file_written = False
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Cnv_Type\tCount\n")
+            for cnvtype in missedfound_summary:
+                outfile.write(f"{cnvtype}\t{missedfound_summary[cnvtype]}\n")
+        file_written = True
+    except IOError:
+        print(f"Could not write missed/found summary results to output file: {outfileloc}")
+    finally:
+        return file_written
