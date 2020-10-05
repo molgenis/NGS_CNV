@@ -106,3 +106,17 @@ def write_missedfound_summary(missedfound_summary, outfileloc):
         print(f"Could not write missed/found summary results to output file: {outfileloc}")
     finally:
         return file_written
+
+
+def write_classification_totals(totalsdata, outfileloc):
+    wrote_file = False
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Classification\tTotal\n")
+            for totalslabel in totalsdata:
+                outfile.write(f"{totalslabel}\t{totalsdata[totalslabel]}\n")
+        wrote_file = True
+    except IOError:
+        print(f"Could not write classification totals to {outfileloc}")
+    finally:
+        return wrote_file
