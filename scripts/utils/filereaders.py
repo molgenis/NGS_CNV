@@ -114,3 +114,35 @@ def read_umcg_common_cnv_file(ccnvfileloc):
         print(f"Could not read common cnv file: {ccnvfileloc}")
     finally:
         return ccnv_data
+
+
+def read_fp_classifications(classifications_fileloc):
+    fp_data = []
+    try:
+        with open(classifications_fileloc, 'r') as infile:
+            next(infile)
+            for fileline in infile:
+                filelinedata = fileline.strip().split("\t")
+                if filelinedata[10] == "FALSE POSITIVE":
+                    fp_data.append(filelinedata[1])
+    except IOError:
+        print("Could not read supplied classifications file")
+    finally:
+        return fp_data
+
+
+def read_fp_classifications_2(classfications_fileloc):
+    fp_data = {}
+    try:
+        with open(classfications_fileloc, 'r') as infile:
+            next(infile)
+            for fileline in infile:
+                filelinedata = fileline.strip().split("\t")
+                if filelinedata[10] == "FALSE POSITIVE":
+                    if filelinedata[1] not in fp_data:
+                        fp_data[filelinedata[1]] = []
+                    fp_data[filelinedata[1]].append(filelinedata[0])
+    except IOError:
+        print("Could not read supplied classifications file")
+    finally:
+        return fp_data

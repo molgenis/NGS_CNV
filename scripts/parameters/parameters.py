@@ -1,3 +1,6 @@
+import argparse
+import os
+
 def get_classification_parameters(tool_choices):
     """Define and return set CLI parameters for the classification script.
 
@@ -68,8 +71,9 @@ def get_totals_parameters(tool_choices):
     totals_args.add_argument("-t", "--tool", dest="tool", type=str, choices=tool_choices, required=True, help="Type of totals to collect")
     totals_args.add_argument("-i", "--infile", dest="infile", type=str, help="Path to input file")
     totals_args.add_argument("-a", "--arrayfile", dest="arrayfile", type=str, help="Path to file with array")
-    totals_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="")
-    totals_args.add_argument("-op", "--outprefix", dest="outprefix", type=str, help="")
+    totals_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to write output to (file or dir)")
+    totals_args.add_argument("-op", "--outprefix", dest="outprefix", type=str, help="Prefix to use for output file names")
+    totals_args.add_argument("-po", "--percent-overlap", dest="percentoverlap", type=int, help="Minimum required percentage overlap")
     return vars(totals_args.parse_args())
 
 
