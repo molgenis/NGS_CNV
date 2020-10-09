@@ -19,12 +19,12 @@ def get_duplicated_regions(fpregioncounts):
 
 
 def get_unique_regions(fpregioncounts):
-    """Fetch and return 
+    """Fetch and return unique regions based on the counts.
 
     Parameters
     ----------
     fpregioncounts : dict
-        
+        Number of occurences for each region
 
     Return
     ------
@@ -39,6 +39,21 @@ def get_unique_regions(fpregioncounts):
 
 
 def determine_similar_regions(dupregions, uniregions, min_req_overlap):
+    """Determine which False Positive regions have at least a minimum required overlap.
+
+    Parameters
+    ----------
+    dupregions : dict
+        
+    uniregions : dict
+    min_req_overlap : int
+        Minimum percentage overlap
+
+    Returns
+    -------
+    simfpregions : dict
+        False Positive regions with 
+    """
     simfpregions = {}
     simfpregions = self.__similar_with_duplicates__(dupregions, uniregions, simfpregions, min_req_overlap)
     simfpregions = self.__similar_with_uniques__(uniregions, simfpregions, min_req_overlap)
@@ -46,6 +61,15 @@ def determine_similar_regions(dupregions, uniregions, min_req_overlap):
 
 
 def __similar_with_duplicates__(dupregions, uniregions, simregions, minpercoverlap):
+    """Determine similar 
+
+    Parameters
+    ----------
+    dupregions : dict
+    uniregions : dict
+    simregions : dict
+    minpercoverlap : int
+    """
     for uregion in uniregions:
         for dregion in dupregions:
             fpoverlap = regions_overlap(uregion, dregion, minpercoverlap)
@@ -70,7 +94,20 @@ def __similar_with_uniques__(unireqions, simregions, minpercoverlap):
 
 
 def regions_overlap(selected_region, other_region, min_overlap_percentage):
-    """Check and return whether a selected_region overlaps with the other_region for at least the set overlap_percentage."""
+    """Check and return whether a selected_region overlaps with the other_region for at least the set overlap_percentage.
+
+    Parameters
+    ----------
+    selected_region : str
+    other_region : str
+    min_overlap_percentage : int
+        Minimum required percentage overlap
+
+    Returns
+    -------
+    list of str and int or None
+        Overlapping region and percentage overlap ; None if there is no overlap
+    """
     if selected_region[1] <= other_region[2] and other_region[1] <= selected_region[2]:
         selected_region_data = smsm.get_gatk_region(selected_region)
         other_region_data = smsm.get_gatk_region(other_region)

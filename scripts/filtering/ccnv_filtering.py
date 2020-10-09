@@ -1,4 +1,13 @@
 def filter_classification_results(infileloc, ccnv_data, outfileloc):
+    """
+
+    Parameters
+    ----------
+    infileloc : str
+    ccnv_data : dict
+    outfileloc : str
+        Path to write filtered classifications output file to
+    """
     try:
         outfile = open(outfileloc, 'w')
         with open(infileloc, 'r') as infile:
@@ -24,6 +33,20 @@ def get_gatk_region(gatkregionstr):
 
 
 def count_ccnv_overlaps(gatkregion, ccnvs):
+    """Determine the number of overlapping Common CNVs.
+
+    Parameters
+    ----------
+    gatkregion : str
+        GATK4 CNV call region as chr:start-end
+    ccnvs : dict
+        Common CNVs
+
+    Returns
+    -------
+    overlap_num : int
+        Number of overlapping Common CNVs
+    """
     overlap_num = 0
     for ccnv in ccnvs:
         if ccnv_overlaps(gatkregion[1], gatkregion[2], ccnv.cnvstart, ccnv.cnvend):
@@ -32,4 +55,22 @@ def count_ccnv_overlaps(gatkregion, ccnvs):
 
 
 def ccnv_overlaps(gatkstart, gatkend, ccnvstart, ccnvend):
+    """Determine and return whether a specified GATK4 CNV call overlaps with a specified common CNV.
+
+    Parameters
+    ----------
+    gatkstart : int
+        GATK4 CNV call start position
+    gatkend : int
+        GATK4 CNV call end position
+    ccnvstart : int
+        Common CNV start position
+    ccnvend : int
+        Common CNV end position
+
+    Returns
+    -------
+    bool
+        True if GATK4 and common CNV call overlap ; False if not
+    """
     return gatkstart <= ccnvend and ccnvstart <= gatkend

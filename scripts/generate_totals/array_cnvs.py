@@ -65,8 +65,18 @@ def determine_arraycnvs_missed(foundcnvs, arraycnvs):
 
 
 def is_arraycnv_in_foundcnvs(arraycnvregion, foundsampledata):
-    """Determine and return whether an array CNV region is in the list of 
-    
+    """Determine and return whether an array CNV region is in the list of already found array CNVs.
+
+    Parameters
+    ----------
+    arraycnvregion : str
+        Array CNV region
+    foundsampledata : dict
+
+    Returns
+    -------
+    acnv_present : bool
+        Whether a specific array CNV is present in the set of found array CNV
     """
     acnv_present = False
     for foundcnv in foundsampledata:
@@ -76,6 +86,13 @@ def is_arraycnv_in_foundcnvs(arraycnvregion, foundsampledata):
 
 
 def summarize_arraycnv_types(arraycnvsfound):
+    """Summarize the number of found array CNV types.
+
+    Parameters
+    ----------
+    arraycnvsfound : dict
+        Array CNVs that were found
+    """
     typecounts = {}
     for samplename in arraycnvsfound:
         for facnv in arraycnvsfound[samplename]:

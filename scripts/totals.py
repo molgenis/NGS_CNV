@@ -68,6 +68,13 @@ def main():
 
 
 def run_arraycnv(totalsparams):
+    """Determine the number of found and missed array CNVs.
+
+    Parameters
+    ----------
+    totalsparams : dict
+        Set CLI parameter values
+    """
     outpath = totalsparams["outfile"] + "/" + totalsparams["outprefix"]
     arraydata = ufr.read_array_cnvs(totalsparams["arrayfile"])
 
@@ -83,6 +90,13 @@ def run_arraycnv(totalsparams):
 
 
 def run_classification(totalsparams):
+    """Gather totals for classification labels.
+
+    Parameters
+    ----------
+    totalsparams : dict
+        Set CLI parameter values
+    """
     gatkresults = ufr.read_classification_file(tg_params["infile"])
     totalsdata = gtcf.generate_classification_totals(gatkresults)
     filewritten = ufw.write_classification_totals(totalsdata, tg_params["outfile"])
@@ -90,6 +104,13 @@ def run_classification(totalsparams):
 
 
 def run_fpregions(totalsparams):
+    """Gather the total for False Positive regions.
+
+    Parameters
+    ----------
+    totalsparams : dict
+        Set CLI parameter values
+    """
     # Read False Positive regions and count there occurences
     fpregions = ufr.read_fp_classifications(totalsparams["infile"])
     fpregion_counts = dict(Count(fpregions))
