@@ -140,7 +140,7 @@ def parameters_are_ok(paramvalues, required_params, param_types):
         Names of incorrect parameters ; empty list if all required parameters are ok.
     """
     incorrect_parameters = []
-    missing_parameters = required_params_set(paramvalues["tool"], paramvalues, required_params)
+    missing_parameters = required_parameters_set(paramvalues["tool"], paramvalues, required_params)
 
     if len(missing_parameters) == 0:
         for paramname in required_params[paramvalues["tool"]]:

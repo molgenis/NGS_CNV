@@ -45,7 +45,8 @@ TOOL_USAGE = {"arraycnv": "python totals.py -t arraycnv -i cnv_classifications.t
 
 def main():
     totalsparams = parpar.get_totals_parameters(TOOL_CHOICES)
-    if parpar.parameters_are_ok(totalsparams, REQUIRED_PARAMS, PARAM_TYPES):
+    incorrect_parameters = parpar.parameters_are_ok(totalsparams, REQUIRED_PARAMS, PARAM_TYPES)
+    if len(incorrect_parameters) == 0:
         # Determine the total number of array CNVs found and missed
         if totalsparams["tool"] == "arraycnv":
             run_arraycnv(totalsparams)
@@ -65,6 +66,8 @@ def main():
         # Gather the total number of GATK4 calls that overlap with an array CNV
         if totalsparams["tool"] == "numofna":
             gttc.get_total_calls(totalsparams["infile"], True)
+    else:
+        print(f"Missing the following parameters: {incorrect_parameters}")
 
 
 def run_arraycnv(totalsparams):

@@ -55,4 +55,4 @@ class ConradData:
     def get_file_locations(self):
         return f"CNV data: {self.cnv_file}\nExon data: {self.exon_file}\nExome data: {self.exome_file}\n"
 
-    def __exon_is_in_cnv__():
+    # def __exon_is_in_cnv__():
