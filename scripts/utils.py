@@ -51,25 +51,33 @@ def main():
 
         # Selet data for a specified plot region
         if utilparams["tool"] == "selectplotregion":
-            genomicregions = uspr.parse_regions(utilparams["region"], utilparams["padding"])
-            intervaldata = uspr.extract_intervals(utilparams["infile"], genomicregions)
-            
-            # Check which type of output file to write (should correspond to the input file type)
-            if utilparams["intype"] == "tsv":
-                ufw.write_tsv_output_file(utilparams["outfile"], intervaldata)
-            elif utilparams["intype"] == "seg":
-                ufw.write_seg_output_file(utilparams["outfile"], intervaldata)
-            elif utilparams["intype"] == "cac":
-                ufw.write_cac_output_file(utilparams["outfile"], intervaldata)
+            run_selectplotregion(utilparams)
 
         # Get interval log2 ratios for SNP positions
         if utilparams["tool"] == "getsnplog2ratios":
-            allelicdata = ufr.read_allelic_data(utilparams["allelicfile"])
-            intervaldata = ufr.read_interval_data(utilparams["intervallist"])
-            ugsl2r.collect_allelic_log2_values(allelicdata, intervaldata, utilparams["outfile"])
+            run_getsnplog2ratios(utilparams)
     else:
         print(f"The following parameters are incorrect: {incorrectparams}")
         parpar.display_tool_usage(utilparams["tool"], TOOL_USAGE)
+
+
+def run_selectplotregion(utilparams):
+    genomicregions = uspr.parse_regions(utilparams["region"], utilparams["padding"])
+    intervaldata = uspr.extract_intervals(utilparams["infile"], genomicregions)
+    
+    # Check which type of output file to write (should correspond to the input file type)
+    if utilparams["intype"] == "tsv":
+        ufw.write_tsv_output_file(utilparams["outfile"], intervaldata)
+    elif utilparams["intype"] == "seg":
+        ufw.write_seg_output_file(utilparams["outfile"], intervaldata)
+    elif utilparams["intype"] == "cac":
+        ufw.write_cac_output_file(utilparams["outfile"], intervaldata)
+
+
+def run_getsnplog2ratios(utilparams):
+    allelicdata = ufr.read_allelic_data(utilparams["allelicfile"])
+    intervaldata = ufr.read_interval_data(utilparams["intervallist"])
+    ugsl2r.collect_allelic_log2_values(allelicdata, intervaldata, utilparams["outfile"])
 
 
 if __name__ == "__main__":
