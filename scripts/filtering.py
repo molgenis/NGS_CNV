@@ -44,17 +44,11 @@ def main():
     if len(incorrect_params) == 0:
         # Perform filtering with a Common CNV list.
         if filterparams["tool"] == "ccnvfiltering":
-            ccnvdata = ufr.read_umcg_common_cnv_file(filterparams["commoncnvs"])
-            fuccf.filter_classification_results(filterparams["infile"], ccnvdata, filterparams["outfile"])
+            run_ccnvfiltering(filterparams)
 
         # Perform filtering with Conrad CNVs
         if filterparams["tool"] == "conradfiltering":
-            gatkresultdata = fcf.read_classification_file(filterparams["infile"])
-            conradcnvs = fcf.read_conrad_data(filterparams["conradfile"])
-            fcf.add_qxte_exon_data(filterparams["exonfile"], conradcnvs)
-            gatkconradcnv = fcf.determine_gatk_conrad_overlaps(gatkresultdata, conradcnvs)
-            filteredgatk = fcf.determine_gatk_filtered_by_conrad(gatkconradcnv)
-            filewritten = fcf.write_conrad_filtered_gatkcalls(gatkresults, filteredgatk, tg_params["outfile"])
+            run_conradfiltering(filterparams)
 
         # Remove GATK4 CNV calls without an overlapping Array CNV call
         if filterparams["tool"] == "nafiltering":
@@ -62,6 +56,20 @@ def main():
     else:
         print(f"Missing parameters {incorrect_params}")
         parpar.display_tool_usage(filterparams["tool"], TOOL_USAGE)
+
+
+def run_ccnvfiltering(filterparams):
+    ccnvdata = ufr.read_umcg_common_cnv_file(filterparams["commoncnvs"])
+    fuccf.filter_classification_results(filterparams["infile"], ccnvdata, filterparams["outfile"])
+
+
+def run_conradfiltering(filterparams):
+    gatkresultdata = fcf.read_classification_file(filterparams["infile"])
+    conradcnvs = fcf.read_conrad_data(filterparams["conradfile"])
+    fcf.add_qxte_exon_data(filterparams["exonfile"], conradcnvs)
+    gatkconradcnv = fcf.determine_gatk_conrad_overlaps(gatkresultdata, conradcnvs)
+    filteredgatk = fcf.determine_gatk_filtered_by_conrad(gatkconradcnv)
+    filewritten = fcf.write_conrad_filtered_gatkcalls(gatkresults, filteredgatk, tg_params["outfile"])
 
 
 if __name__ == "__main__":
