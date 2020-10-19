@@ -84,7 +84,7 @@ def __similar_with_duplicates__(dupregions, uniregions, simregions, minpercoverl
     return simregions
 
 
-def __similar_with_uniques__(unireqions, simregions, minpercoverlap):
+def __similar_with_uniques__(uniregions, simregions, minpercoverlap):
     for uregion in uniregions:
         for ouregion in uniregions:
             fpoverlap = regions_overlap(uregion, ouregion, minpercoverlap)
@@ -92,7 +92,7 @@ def __similar_with_uniques__(unireqions, simregions, minpercoverlap):
             if fpoverlap is not None:
                 if uregion not in simregions:
                     simregions[uregion] = FpOverlap(uregion)
-                simregions[uregions].add_overlap(fpoverlap[0], fpoverlap[1])
+                simregions[uregion].add_overlap(fpoverlap[0], fpoverlap[1])
     return simregions
 
 
@@ -125,8 +125,8 @@ def regions_overlap(selected_region, other_region, min_overlap_percentage):
 
         # Determine the overlap percentage
         overlap_size = selected_region_size - non_overlap_size
-        perc_overlap = (overlap_size/selected_region_size)*100
-
-        if perc_overlap >= min_overlap_percentage:
-            return [other_region, perc_overlap]
+        if overlap_size > 0:
+            perc_overlap = (overlap_size/selected_region_size)*100
+            if perc_overlap >= min_overlap_percentage:
+                return [other_region, perc_overlap]
     return None
