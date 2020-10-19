@@ -1,3 +1,6 @@
+from classes.fpoverlap import FpOverlap
+import shared_methods.shared_methods as smsm
+
 def get_duplicated_regions(fpregioncounts):
     """Fetch and return false positive regions
 
@@ -55,8 +58,8 @@ def determine_similar_regions(dupregions, uniregions, min_req_overlap):
         False Positive regions with 
     """
     simfpregions = {}
-    simfpregions = self.__similar_with_duplicates__(dupregions, uniregions, simfpregions, min_req_overlap)
-    simfpregions = self.__similar_with_uniques__(uniregions, simfpregions, min_req_overlap)
+    simfpregions = __similar_with_duplicates__(dupregions, uniregions, simfpregions, min_req_overlap)
+    simfpregions = __similar_with_uniques__(uniregions, simfpregions, min_req_overlap)
     return simfpregions
 
 

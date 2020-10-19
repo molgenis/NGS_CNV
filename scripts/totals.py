@@ -28,7 +28,7 @@ import utils.filewriters as ufw
 TOOL_CHOICES = ["arraycnv", "classification", "fpregions", "numofcalls", "numofna"]
 REQUIRED_PARAMS = {"arraycnv": ["arrayfile", "infile", "outfile", "outprefix"],
                    "classification": ["infile", "outfile"],
-                   "fpregions": ["infile", "outfile"],
+                   "fpregions": ["infile", "outfile", "outprefix"],
                    "numofcalls": ["infile"],
                    "numofna": ["infile"]}
 OPTIONAL_PARAMS = {}
@@ -116,7 +116,7 @@ def run_fpregions(totalsparams):
     """
     # Read False Positive regions and count there occurences
     fpregions = ufr.read_fp_classifications(totalsparams["infile"])
-    fpregion_counts = dict(Count(fpregions))
+    fpregion_counts = dict(Counter(fpregions))
 
     # Split the fpregion_counts into unique and duplicated regions. Also similar regions if needed
     dupfpregions = gtfr.get_duplicated_regions(fpregion_counts)
@@ -124,13 +124,14 @@ def run_fpregions(totalsparams):
     simfpregions = {}
     if totalsparams["percentoverlap"] is not None:
         if 0 < totalsparams["percentoverlap"] < 100:
-            simfpregions = gtfr.determine_similar_regions()
+            simfpregions = gtfr.determine_similar_regions(dupfpregions, unifpregions, totalsparams["percentoverlap"])
 
     # Write the output files with duplicate, similar and unique FP regions
-    ufw.write_duplicate_fpregions(outfileloc, dupfpregions)
-    ufw.write_unique_fpregions(outfileloc, unifpregions)
+    outpath = totalsparams["outfile"] + "/" + totalsparams["outprefix"]
+    ufw.write_duplicate_fpregions(f"{outpath}_duplicate_fps.txt", dupfpregions)
+    ufw.write_unique_fpregions(f"{outpath}_unique_fps.txt", unifpregions)
     if len(simfpregions) > 0:
-        ufw.write_similar_fpregions(outfileloc, simfpregions)
+        ufw.write_similar_fpregions(f"{outpath}_similar_fps.txt", simfpregions)
 
 
 if __name__ == "__main__":

@@ -120,3 +120,52 @@ def write_classification_totals(totalsdata, outfileloc):
         print(f"Could not write classification totals to {outfileloc}")
     finally:
         return wrote_file
+
+
+def write_duplicate_fpregions(outfileloc, dupfpregions):
+    """Write duplicate False Positive regions to an output file.
+
+    Parameters
+    ----------
+    outfileloc : str
+        Path to write duplicate False Positive regions to
+    dupfpregions : dict
+        False Positive regions and counts
+    """
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Region\tCount\n")
+            for dupregion in dupfpregions:
+                outfile.write(f"{dupregion}\t{dupfpregions[dupregion]}\n")
+    except IOError:
+        print(f"Could not write duplicate False Positive regions to {outfileloc}")
+
+
+def write_unique_fpregions(outfileloc, unifpregions):
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Region\tCount\n")
+            for uniregion in unifpregions:
+                outfile.write(f"{uniregion}\t{unifpregions[uniregion]}\n")
+    except IOError:
+        print(f"Could not write unique False Positive regions to {outfileloc}")
+
+
+def write_similar_fpregions(outfileloc, simfpregions):
+    """Write similar False Positive regions to an output file.
+
+    Parameters
+    ----------
+    outfileloc : str
+        Path to write similar False Positive regions to
+    simfpegions : dict
+        Similar False Positive regions and overlapping regions
+    """
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Region\tOverlap_Region\tOverlap_Percentage\n")
+            for simregion in simfpregions:
+                for overlapregion in simfpregions[simregion].overlaps:
+                    outfile.write(f"{simregion}\t{overlapregion}\t{simfpregions[simregion].overlaps[overlapregion]}\n")
+    except IOError:
+        print(f"Could not write similar False Positive region to {outfileloc}")
