@@ -152,7 +152,11 @@ def parameters_are_ok(paramvalues, required_params, param_types):
 
             # Check whether the folder to write an output file to exists.
             elif param_types[paramname] == "outputfile":
-                outputdir = "/".join(paramvalues[paramname].split("/")[0:-1])
+                outputdir = ""
+                if '/' in paramvalues[paramname]:
+                    outputdir = "/".join(paramvalues[paramname].split("/")[0:-1])
+                elif '\\' in paramvalues[paramname]:
+                    outputdir = "\\".join(paramvalues[paramname].split("\\")[0:-1])
                 if not os.path.isdir(outputdir):
                     incorrect_parameters.append(paramname)
 
