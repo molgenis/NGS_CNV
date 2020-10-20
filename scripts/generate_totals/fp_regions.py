@@ -75,7 +75,7 @@ def __similar_with_duplicates__(dupregions, uniregions, simregions, minpercoverl
     """
     for uregion in uniregions:
         for dregion in dupregions:
-            fpoverlap = regions_overlap(uregion, dregion, minpercoverlap)
+            fpoverlap = regions_overlap(uregion, dregion, simregions, minpercoverlap)
 
             if fpoverlap is not None:
                 if uregion not in simregions:
@@ -87,7 +87,7 @@ def __similar_with_duplicates__(dupregions, uniregions, simregions, minpercoverl
 def __similar_with_uniques__(uniregions, simregions, minpercoverlap):
     for uregion in uniregions:
         for ouregion in uniregions:
-            fpoverlap = regions_overlap(uregion, ouregion, minpercoverlap)
+            fpoverlap = regions_overlap(uregion, ouregion, simregions, minpercoverlap)
 
             if fpoverlap is not None:
                 if uregion not in simregions:
@@ -96,7 +96,7 @@ def __similar_with_uniques__(uniregions, simregions, minpercoverlap):
     return simregions
 
 
-def regions_overlap(selected_region, other_region, min_overlap_percentage):
+def regions_overlap(selected_region, other_region, simregions, min_overlap_percentage):
     """Check and return whether a selected_region overlaps with the other_region for at least the set overlap_percentage.
 
     Parameters
@@ -111,22 +111,42 @@ def regions_overlap(selected_region, other_region, min_overlap_percentage):
     list of str and int or None
         Overlapping region and percentage overlap ; None if there is no overlap
     """
-    if selected_region[1] <= other_region[2] and other_region[1] <= selected_region[2]:
-        selected_region_data = smsm.get_gatk_region(selected_region)
-        other_region_data = smsm.get_gatk_region(other_region)
-        selected_region_size = selected_region_data[2] - selected_region_data[1]
+    selected_region_data = smsm.get_gatk_region(selected_region)
+    other_region_data = smsm.get_gatk_region(other_region)
 
-        # Determine the size of the overlap
-        non_overlap_size = 0
-        if selected_region_data[1] < other_region_data[1]:
-            non_overlap_size += other_region_data[1] - selected_region_data[1]
-        if selected_region_data[1] > other_region_data[2]:
-            non_overlap_size += selected_region_data[2] - other_region_data[2]
+    if selected_region != other_region:
+        if selected_region_data[0] == other_region_data[0]:
+            if selected_region_data[1] <= other_region_data[2] and other_region_data[1] <= selected_region_data[2]:
 
-        # Determine the overlap percentage
-        overlap_size = selected_region_size - non_overlap_size
-        if overlap_size > 0:
-            perc_overlap = (overlap_size/selected_region_size)*100
-            if perc_overlap >= min_overlap_percentage:
-                return [other_region, perc_overlap]
+                if not similarfp_already_found(selected_region, other_region, simregions):
+                    selected_region_size = selected_region_data[2] - selected_region_data[1]
+
+                    # Determine the size of the overlap
+                    non_overlap_size = 0
+                    if selected_region_data[1] < other_region_data[1]:
+                        non_overlap_size += other_region_data[1] - selected_region_data[1]
+                    if selected_region_data[1] > other_region_data[2]:
+                        non_overlap_size += selected_region_data[2] - other_region_data[2]
+
+                    # Determine the overlap percentage
+                    overlap_size = selected_region_size - non_overlap_size
+                    if overlap_size > 0:
+                        perc_overlap = (overlap_size/selected_region_size)*100
+                        if perc_overlap >= min_overlap_percentage:
+                            return [other_region, perc_overlap]
     return None
+
+
+def similarfp_already_found(selectedregion, otherregion, simfpregions):
+    """Check and return whether a similar fpregion has already been found.
+
+    This is to avoid an A<->B entry to be recorded as B<->A as well.
+
+    Parameters
+    ----------
+    selectedregion : str
+    otherregion : str
+    """
+    if otherregion in simfpregions:
+        return selectedregion in simfpregions[otherregion].overlaps
+    return False
