@@ -129,9 +129,12 @@ def run_fpregions(totalsparams):
     # Write the output files with duplicate, similar and unique FP regions
     outpath = totalsparams["outfile"] + "/" + totalsparams["outprefix"]
     ufw.write_duplicate_fpregions(f"{outpath}_duplicate_fps.txt", dupfpregions)
-    ufw.write_unique_fpregions(f"{outpath}_unique_fps.txt", unifpregions)
     if len(simfpregions) > 0:
         ufw.write_similar_fpregions(f"{outpath}_similar_fps.txt", simfpregions)
+        simfilterlist = gtfr.get_similar_filterlist(simfpregions)
+        print(f"Found {len(simfilterlist)} similar False Positive regions")
+        unifpregions = gtfr.filter_uniquefps_with_similars(simfilterlist, unifpregions)
+    ufw.write_unique_fpregions(f"{outpath}_unique_fps.txt", unifpregions)
 
 
 if __name__ == "__main__":

@@ -101,6 +101,17 @@ def read_array_cnvs(arrayfileloc):
 
 
 def read_umcg_common_cnv_file(ccnvfileloc):
+    """Read file containing Common CNVs.
+
+    Parameters
+    ----------
+    ccnvfileloc : str
+
+    Returns
+    -------
+    ccnv_data : dict
+        Common CNV data
+    """
     ccnv_data = {}
     try:
         with open(ccnvfileloc, 'r') as ccnvfile:
@@ -146,3 +157,91 @@ def read_fp_classifications_2(classfications_fileloc):
         print("Could not read supplied classifications file")
     finally:
         return fp_data
+
+
+def read_conifer_calls(coniferfileloc):
+    """Read a file containing Conifer CNV calls.
+
+    Parameters
+    ----------
+    coniferfileloc : str
+        Path to conifer CNV calls file
+
+    Returns
+    -------
+    conifer_calls : dict
+        Conifer CNV calls per sample
+    """
+    conifer_calls = {}
+    try:
+        with open(coniferfileloc, 'r') as coniferfile:
+            next(coniferfile)
+            for fileline in coniferfile:
+                filelinedata = fileline.strip().split("\t")
+
+                if filelinedata[0] not in conifer_calls:
+                    confcall = ConiferCall(filelinedata[0], filelinedata[1], int(filelinedata[2]), int(filelinedata[3]), filelinedata[4])
+                    conifer_calls[filelinedata[0]] = []
+                conifer_calls[].append(confcall)
+    except IOError:
+        print(f"Could not read conifer file {coniferfileloc}")
+    finally:
+        return conifer_calls
+
+
+def read_exomedepth_calls(exomedepthfileloc):
+    """Read an ExomeDepth calls file of a single sample.
+
+    Parameters
+    ----------
+    exomedepthfileloc : str
+        Path to ExomeDepth sample calls.
+
+    Returns
+    -------
+    exomedepth_calls : list of ExomeDepthCall
+        ExomeDepth CNV calls for a single sample
+    """
+    exomedepth_calls = []
+    try:
+        with open(exomedepthfileloc, 'r') as exomedepthfile:
+            next(exomedepthfile)
+
+            for fileline in exomedepthfile:
+                fileline = fileline.strip().replace("\"", "")
+                filelinedata = fileline.split(",")
+
+                conrad_data = filelinedata[12:]
+                edc = ExomeDepthCall(int(filelinedata[0]), int(filelinedata[1]), filelinedata[2], int(filelinedata[3]),
+                                     int(filelinedata[4]), int(filelinedata[5]), filelinedata[6], filelinedata[7],
+                                     float(filelinedata[8]), int(filelinedata[9]), int(filelinedata[10]), float(filelinedata[11]), conrad_data)
+                exomedepth_calls.append(edc)
+    except IOError:
+        print(f"Could not read ExomeDepth calls file {exomedepthfileloc}")
+    finally:
+        return exomedepth_calls
+
+
+def read_exomedepth_collection(exomedepthfolder):
+    """Reads a set of ExomeDepth call files
+
+    Parameters
+    ----------
+    exomedepthfolder : str
+        Path to folder containing ExomeDepth call files.
+
+    Returns
+    -------
+    exomedepth_data : dict
+        ExomeDepth CNV calls per sample.
+    """
+    ed_files = os.listdir(exomedepthfolder)
+    ed_files = [edfile for edfile in ed_files if edfile.endswith(".csv")]
+
+    exomedepth_data = {}
+    for edfile in ed_files:
+        sample_prefix = edfile.split("_")[0]
+        if sample_prefix not in exomedepth_data:
+            exomedepth_data[sample_prefix] = None
+        sample_calls = read_exomedepth_calls(edfile)
+        exomedepth_data[sample_prefix] = sample_calls

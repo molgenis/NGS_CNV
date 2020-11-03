@@ -117,6 +117,8 @@ def regions_overlap(selected_region, other_region, simregions, min_overlap_perce
     if selected_region != other_region:
         if selected_region_data[0] == other_region_data[0]:
             if selected_region_data[1] <= other_region_data[2] and other_region_data[1] <= selected_region_data[2]:
+                print(f"{selected_region} :: {other_region}")
+                print(f"{selected_region_data} :: {other_region_data}")
 
                 if not similarfp_already_found(selected_region, other_region, simregions):
                     selected_region_size = selected_region_data[2] - selected_region_data[1]
@@ -150,3 +152,34 @@ def similarfp_already_found(selectedregion, otherregion, simfpregions):
     if otherregion in simfpregions:
         return selectedregion in simfpregions[otherregion].overlaps
     return False
+
+
+def filter_uniquefps_with_similars(simfp_filterlist, unifpregions):
+    """Filter similar False Positive regions from the set of unique False Positive regions.
+
+    Parameters
+    ----------
+    simfpregions : list
+        Similar False Positive regions
+    unifpregions : dict
+        Unique False Positive regions
+    """
+    for simregion in simfp_filterlist:
+        if simregion in unifpregions:
+            del unifpregions[simregion]
+    return unifpregions
+
+
+def get_similar_filterlist(simfpregions):
+    """Construct and return the list of all similar False Positive regions.
+
+    Parameters
+    ----------
+    simfpregions : dict
+        Similar False Positive regions
+    """
+    simfilterlist = []
+    for simregion in simfpregions:
+        simfilterlist.append(simregion)
+        simfilterlist.extend(list(simfpregions[simregion].overlaps.keys()))
+    return list(set(simfilterlist))
