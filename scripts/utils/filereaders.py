@@ -1,3 +1,82 @@
+def read_sample_table(samplefileloc):
+    """Read and return a sample translation table.
+
+    Parameters
+    ----------
+    samplefileloc : str
+        Path to sample translation table file
+    """
+    sample_table = {}
+    try:
+        with open(samplefileloc, 'r') as samplefile:
+            next(samplefile)
+            for sampleline in samplefile:
+                sampledata = sampleline.strip().split("\t")
+                full_sample_id = sampledata[2].split(".")[0]
+
+                if full_sample_id not in sample_table:
+                    sample_table[full_sample_id] = sampledata[0]
+    except IOError:
+        print(f"Could not open sample table {samplefileloc}")
+    finally:
+        return sample_table
+
+
+def read_probes_data(probefileloc):
+    """Read and return probe data.
+
+    The probe file should have three columns: chrom, start, end.
+
+    Parameters
+    ----------
+    probefileloc : str
+        Path to probes file
+    """
+    probe_data = {}
+    try:
+        with open(probefileloc, 'r') as probefile:
+            for probeline in probefile:
+                probelinedata = probeline.strip().split("\t")
+
+                if probelinedata[0] not in probe_data:
+                    probe_data[probelinedata[0]] = []
+                probe_data[probelinedata[0]].append(Probe(probelinedata[0], int(probelinedata[1]), int(probelinedata[2])))
+    except IOError:
+        print(f"Could not open probe file {probefileloc}")
+    finally:
+        return probe_data
+
+
+def read_exon_data(exonfileloc):
+    """Read and return exon data from a file.
+
+    The exon file should have four columns: chr, start, end, annotation/gene.
+
+    Parameters
+    ----------
+    exonfileloc : str
+        Path to exon file
+
+    Returns
+    -------
+    exon_data : dict
+        Exon data per chromosome
+    """
+    exon_data = {}
+    try:
+        with open(exonfileloc, 'r') as exonfile:
+            for exonline in exonfile:
+                exonlinedata = exonline.strip().split()
+
+                if exonlinedata[0] not in exon_data:
+                    exon_data[exonlinedata[0]] = []
+                exon_data[exonlinedata[0]].append(Exon(exonlinedata[0], int(exonlinedata[1]), int(exonlinedata[2]), exonlinedata[3]))
+    except IOError:
+        print(f"Could not open exon file {exonfileloc}")
+    finally:
+        return exon_data
+
+
 def read_interval_data(intervalfileloc):
     """Read and return interval data from a provided file.
     
