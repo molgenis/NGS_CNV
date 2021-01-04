@@ -2,10 +2,10 @@ import os
 import argparse
 
 # Import required classes
-# from classes.probe import Probe
-# from classes.exon import Exon
+from classes.probe import Probe
+from classes.exon import Exon
 from classes.cnv import Cnv
-# from classes.arraycnv import ArrayCnv
+from classes.arraycnv import ArrayCnv
 from classes.conifercall import ConiferCall
 from classes.exomedepthcall import ExomeDepthCall
 
