@@ -1,3 +1,8 @@
+from classes.arraycnv import ArrayCnv
+from classes.exon import Exon
+from classes.probe import Probe
+
+
 def read_sample_table(samplefileloc):
     """Read and return a sample translation table.
 
@@ -67,10 +72,13 @@ def read_exon_data(exonfileloc):
         with open(exonfileloc, 'r') as exonfile:
             for exonline in exonfile:
                 exonlinedata = exonline.strip().split()
+                exonchrom = exonlinedata[0]
+                if not exonchrom.startswith("chr"):
+                    exonchrom = f"chr{exonchrom}"
 
-                if exonlinedata[0] not in exon_data:
-                    exon_data[exonlinedata[0]] = []
-                exon_data[exonlinedata[0]].append(Exon(exonlinedata[0], int(exonlinedata[1]), int(exonlinedata[2]), exonlinedata[3]))
+                if exonchrom not in exon_data:
+                    exon_data[exonchrom] = []
+                exon_data[exonchrom].append(Exon(exonlinedata[0], int(exonlinedata[1]), int(exonlinedata[2]), exonlinedata[3]))
     except IOError:
         print(f"Could not open exon file {exonfileloc}")
     finally:
@@ -261,7 +269,7 @@ def read_conifer_calls(coniferfileloc):
                 if filelinedata[0] not in conifer_calls:
                     confcall = ConiferCall(filelinedata[0], filelinedata[1], int(filelinedata[2]), int(filelinedata[3]), filelinedata[4])
                     conifer_calls[filelinedata[0]] = []
-                conifer_calls[].append(confcall)
+                conifer_calls[filelinedata[0]].append(confcall)
     except IOError:
         print(f"Could not read conifer file {coniferfileloc}")
     finally:

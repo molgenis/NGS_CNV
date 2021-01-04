@@ -42,4 +42,4 @@ class ArrayCnv:
         return len(self.wes_cnvs)
 
     def __str__(self):
-        return ""
+        return f"{self.cnv_sample}\t{self.cnv_chrom}\t{self.cnv_start}\t{self.cnv_end}"

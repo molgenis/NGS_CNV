@@ -29,5 +29,4 @@ class ExomeDepthCall:
         return f"{self.chrom}:{self.startpos}-{self.endpos}"
 
     def __str__(self):
-        return f"{self.startp}\t{self.endp}\t{self.call_type}\t{self.num_exons}\t{self.startpos}\t{self.endpos}\t{self.chrom}\t{self.identifier}\t"
-               f"{self.bf}\t{self.reads_expected}\t{self.reads_observed}\t{self.reads_ratio}\t{self.conrad_hg19}"
+        return f"{self.startp}\t{self.endp}\t{self.call_type}\t{self.num_exons}\t{self.startpos}\t{self.endpos}\t{self.chrom}\t{self.identifier}\t{self.bf}\t{self.reads_expected}\t{self.reads_observed}\t{self.reads_ratio}\t{self.conrad_hg19}"

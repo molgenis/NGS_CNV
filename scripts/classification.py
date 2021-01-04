@@ -2,16 +2,16 @@ import os
 import argparse
 
 # Import required classes
-from classes.probe import Probe
-from classes.exon import Exon
+# from classes.probe import Probe
+# from classes.exon import Exon
 from classes.cnv import Cnv
-from classes.arraycnv import ArrayCnv
+# from classes.arraycnv import ArrayCnv
 from classes.conifercall import ConiferCall
 from classes.exomedepthcall import ExomeDepthCall
 
 # Import classification scripts
 import classification.classification as clcl
-import classification.conifer as clfc
+#import classification.conifer as clfc
 #import classification.exomedepth as clfed
 #import classification.gatk as clfg
 
@@ -35,7 +35,8 @@ OPTIONAL_PARAMS = {"conifer": ["numofexons", "numofprobes"],
                    "exomedepth": ["numofexons", "numofprobes"],
                    "gatk": ["numofexons", "numofprobes"]}
 PARAM_TYPES = {"samples": "inputfile",
-               "exonfile": "inputfile",
+               "exonsfile": "inputfile",
+               "probesfile": "inputfile",
                "arrayfile": "inputfile",
                "indir": "directory",
                "infile": "inputfile",
@@ -112,7 +113,7 @@ def main():
                 array_classify_leftovers(array_data)
 
                 print("...Writing all Conifer classifications to file...")
-                file_written = write_cnv_classifications(conifer_data, cmd_argvalues["output"], cmd_argvalues["filterneutrals"], cmdf_argvalues["cnvsize"], CONIFER_CALL_TRANSLATIONS, "Conifer")
+                file_written = write_cnv_classifications(conifer_data, cmd_argvalues["output"], cmd_argvalues["filterneutrals"], cmd_argvalues["cnvsize"], CONIFER_CALL_TRANSLATIONS, "Conifer")
                 print(f"...Output file written?: {file_written}...")
 
             # EXOMEDEPTH CNV CLASSIFICATION
@@ -623,18 +624,19 @@ def read_conifer_data(coniferfileloc, sampledata, exondata, probedata):
             next(coniferfile)
             for fileline in coniferfile:
                 filelinedata = fileline.strip().split("\t")
+                samplename = filelinedata[0].split(".")[0]
 
                 # Get the pseudo sample name
                 sample_pseudo = ""
-                if filelinedata[0] in sampledata:
-                    sample_pseudo = sampledata[filelinedata[0]]
+                if samplename in sampledata:
+                    sample_pseudo = sampledata[samplename]
 
                 # Add the pseudo sample to the conifer_data
                 if sample_pseudo != "" and sample_pseudo not in conifer_data:
                     conifer_data[sample_pseudo] = []
 
                 # Create the ConiferCall, add overlapping exons and probes and add it to the data dict
-                cfcall = ConiferCall(sample_pseudo, filelinedata[0], filelinedata[1], int(filelinedata[2]), int(filelinedata[3]), filelinedata[4])
+                cfcall = ConiferCall(sample_pseudo, samplename, filelinedata[1], int(filelinedata[2]), int(filelinedata[3]), filelinedata[4])
                 cfcall.exons = clcl.add_exons(cfcall, exondata)
                 cfcall.probes = clcl.add_probes(cfcall, probedata)
                 conifer_data[sample_pseudo].append(cfcall)
@@ -646,10 +648,10 @@ def read_conifer_data(coniferfileloc, sampledata, exondata, probedata):
 
 def evaluate_cnv_calls(tool_cnvs, array_cnvs, minexons, minprobes, minoverlap, calltranslationtable):
     for samplepseudo in tool_cnvs:
-        for toolcnv in tool_cnvs[samplepseudo]
-        if toolcnv.cnv_sample_pseudo in array_cnvs:
-            arraysamplecnvs = array_cnvs[toolcnv.cnv_sample_pseudo]
-            classify_cnv(toolcnv, arraysamplecnvs, minexons, minprobes, minoverlap, calltranslationtable)
+        for toolcnv in tool_cnvs[samplepseudo]:
+            if toolcnv.cnv_sample_pseudo in array_cnvs:
+                arraysamplecnvs = array_cnvs[toolcnv.cnv_sample_pseudo]
+                classify_cnv(toolcnv, arraysamplecnvs, minexons, minprobes, minoverlap, calltranslationtable)
 
 
 def conifer_evaluate(conifer_cnvs, array_cnvs, minexons, minprobes, minoverlap, calltranslationtable):
@@ -680,10 +682,10 @@ def classify_cnv(cnvcall, arraycnvs, minexons, minprobes, minoverlap, translatio
     match_with_array = False
     for arraycnv in arraycnvs:
         if cnvcall.cnv_chrom == arraycnv.cnv_chrom and cnvcall.cnv_overlap(arraycnv):
-            cnv_overlap = cnvcall.percent_overlap(range(arraycnv.cnv_start, arraycnv.cnv_end))
+            cnv_overlap = cnvcall.get_percent_overlap(range(arraycnv.cnv_start, arraycnv.cnv_end))
             if cnv_overlap >= minoverlap:
                 match_with_array = True
-                cnvcall.classification = []
+                cnvcall.classification = ["TRUE POSITIVE", f"{len(cnvcall.exons)}", f"{len(cnvcall.probes)}"]
                 cnvcall.call_result = determine_call_result(cnvcall, arraycnv, translationtable)
                 cnvcall.array_cnv = arraycnv
                 cnvcall_hangovers = determine_hangover(cnvcall.cnv_start, cnvcall.cnv_end, arraycnv.cnv_start, arraycnv.cnv_end)
@@ -783,7 +785,7 @@ def read_exomedepth_data(edfileloc, exomedepthdata, samplename, samplepseudo, pr
                     exomedepthdata[samplename] = []
                 exomedepthdata[samplename].append(edcall)
     except IOError:
-        print(f"Could not read ExomeDepth calls file {}")
+        print(f"Could not read ExomeDepth calls file {edfileloc}")
     finally:
         return exomedepthdata
 
@@ -814,7 +816,7 @@ def write_cnv_classifications(toolcnvdata, outfileloc, filterneutrals, mincnvsiz
     wrote_file = False
     try:
         with open(outfileloc, 'w') as outfile:
-            outfile.write("Sample\t{toolname}_CNV\t{toolname}_Call\t{toolname}_Size\tArray_CNV\tArray_Call\tArray_Size\tHangover_L\tHangover_R\tCall_Result\tClassification\t#_Exons\t#_Probes\t{toolname}_genes\tArray_genes\t{toolname}_UGenes\tArray_UGenes\n")
+            outfile.write(f"Sample\t{toolname}_CNV\t{toolname}_Call\t{toolname}_Size\tArray_CNV\tArray_Call\tArray_Size\tHangover_L\tHangover_R\tCall_Result\tClassification\t#_Exons\t#_Probes\t{toolname}_genes\tArray_genes\t{toolname}_UGenes\tArray_UGenes\n")
             for samplename in toolcnvdata:
                 for toolcnv in toolcnvdata[samplename]:
                     write_line = True
@@ -833,7 +835,7 @@ def write_cnv_classifications(toolcnvdata, outfileloc, filterneutrals, mincnvsiz
                     tool_ugene_names = tool_gene_names
 
                     # Replace the default values if there is an array CNV call for the tool CNV.
-                    toolcnv.array_cnv is not None:
+                    if toolcnv.array_cnv:
                         array_region = toolcnv.array_cnv.get_region()
                         array_call = toolcnv.array_cnv.cnv_call
                         array_size = toolcnv.array_cnv.get_length()

@@ -20,7 +20,7 @@ def get_classification_parameters(tool_choices):
     cmd_args.add_argument("-e", "--exonsfile", type=str, dest="exonsfile", help="Path to exons file")
     cmd_args.add_argument("-p", "--probesfile", type=str, dest="probesfile", help="Path to probes file")
     cmd_args.add_argument("-i", "--indir", type=str, dest="indir", help="Path to input folder")
-    cmd_args.add_argument("-if", "infile", type=str, dest="infile", help="Path to input file")
+    cmd_args.add_argument("-if", "--infile", type=str, dest="infile", help="Path to input file")
     cmd_args.add_argument("-a", "--arrayfile", type=str, dest="arrayfile", help="Path to array CNV calls file")
     cmd_args.add_argument("-o", "--output", type=str, dest="output", help="Path to folder to write output file to")
     cmd_args.add_argument("-op", "--outprefix", type=str, dest="outprefix", help="Prefix to use for output files")
