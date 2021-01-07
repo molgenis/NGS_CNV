@@ -53,6 +53,8 @@ def get_filtering_parameters(tool_choices):
     filter_args.add_argument("-c", "--conradfile", dest="conradfile", type=str, help="Path to file with Conrad CNVs")
     filter_args.add_argumemt("-e", "--exonfile", dest="exonfile", type=str, help="Path to exon BED file")
     filter_args.add_argument("-u", "--commoncnvs", dest="commoncnvs", type=str, help="Path to file with Common CNVs")
+    filter_args.add_argument("-C", "--colname", dest="colname", type=str, help="Column name for size filtering")
+    filter_args.add_argument("-S", "--cnvsize", dest="cnvsize", type=int, help="Minimum size for CNVs to be retained")
     return vars(filter_args.parse_args())
 
 
