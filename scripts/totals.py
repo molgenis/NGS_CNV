@@ -84,7 +84,7 @@ def run_arraycnv(totalsparams):
     found_arraycnvs = gtac.determine_arraycnvs_found(totalsparams["infile"], arraydata)
     found_summary = gtac.summarize_arraycnv_types(found_arraycnvs)
     missed_arraycnvs = gtac.determine_arraycnvs_missed(found_arraycnvs, arraydata)
-    missed_summary = gtac.summarize_arraycnv_types(missed_summary)
+    missed_summary = gtac.summarize_arraycnv_types(missed_arraycnvs)
 
     ufw.write_missedfound_arraycnvs(found_arraycnvs, f"{outpath}_found_arraycnvs.txt")
     ufw.write_missedfound_summary(found_summary, f"{outpath}_found_arraycnvs_summary.txt")

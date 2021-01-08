@@ -175,7 +175,7 @@ def read_array_cnvs(arrayfileloc):
                     if arraylinedata[0] not in array_cnv_data:
                         array_cnv_data[arraylinedata[0]] = {}
 
-                    arrayregion = get_gatk_region(arraylinedata[1])
+                    arrayregion = get_array_region(arraylinedata[1])
                     regionstr = f"{arrayregion[0]}:{arrayregion[1]}-{arrayregion[2]}"
 
                     if regionstr not in array_cnv_data[arraylinedata[0]]:
@@ -332,3 +332,23 @@ def read_exomedepth_collection(exomedepthfolder):
             exomedepth_data[sample_prefix] = None
         sample_calls = read_exomedepth_calls(edfile)
         exomedepth_data[sample_prefix] = sample_calls
+
+
+def get_array_region(arraycnvregion):
+    """Split and return the array CNV region into the chrom, start and stop.
+
+    Parameters
+    ----------
+    arraycnvregion : str
+        Array CNV region data
+
+    Returns
+    -------
+    list of str and int
+        Array CNV region data
+    """
+    arrayregion = arraycnvregion.replace(",", "")
+    arrayregiondata = arrayregion.split(":")
+    arraystart = arrayregiondata[1].split("-")[0]
+    arrayend = arrayregiondata[1].split("-")[1]
+    return [arrayregiondata[0], arraystart, arrayend]

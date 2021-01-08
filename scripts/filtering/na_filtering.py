@@ -19,19 +19,17 @@ def determine_header_field(headerfields, columnname):
     return indexfield
 
 
-def filter_by_size(inputfile, outfileloc, callcolumn, minimumsize):
-    """Filter a file with CNV calls to only retain calls satisfying a set minimum size.
+def filter_na(inputfile, outfileloc, colname):
+    """Filter out calls without an overlapping Array CNV
 
     Parameters
     ----------
     inputfile : str
-        Path to classification file to filter
+        CNV classification file to filter NA from
     outfileloc : str
-        Path to write filtered output file to
-    callcolumn : str
-        Column name containing the call 
-    minimumsize : int
-        Minimum size calls need to have to be retained
+        Path to write output file to
+    colname : str
+        Name of the column to use for filtering
 
     Returns
     -------
@@ -44,16 +42,17 @@ def filter_by_size(inputfile, outfileloc, callcolumn, minimumsize):
 
         with open(inputfile, 'r') as infile:
             headerline = next(infile)
-            index_field = determine_header_field(headerline.strip().split("\t"), callcolumn)
+            index_field = determine_header_field(headerline.strip().split("\t"), colname)
 
             if index_field:
                 outfile.write(headerline)
                 for fileline in infile:
                     filelinedata = fileline.strip().split("\t")
-                    if int(filelinedata[index_field]) >= minimumsize:
+                    if filelinedata[index_field] != "NA":
                         outfile.write(fileline)
         outfile.close()
+        wrote_file = True
     except IOError:
-        print("Could not filter input file.")
+        print("Could not filter classifications file.")
     finally:
         return wrote_file
