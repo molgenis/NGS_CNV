@@ -235,3 +235,35 @@ def get_gatk_region(gatkregion):
     gatk_start = int(gatkregion.split(":")[1].split("-")[0])
     gatk_end = int(gatkregion.split(":")[1].split("-")[1])
     return [gatk_chrom, gatk_start, gatk_end]
+
+
+def write_conrad_filtered_gatkcalls(gatkcalldata, filteredgatkcnvs, outfileloc):
+    file_written = False
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Sample\tGATK4_CNV\tGATK4_Call\tGATK4_Size\tArray_CNV\tArray_Call\tArray_Size\tHangover_L\tHangover_R\tCall_Result\tClassification\t#_Exons\t#_Probes\tGATK4_genes\tArray_genes\tGATK4_UGenes\tArray_UGenes\n")
+            for samplename in gatkcalldata:
+                for gatkcnv in gatkcalldata[samplename]:
+                    if samplename in filteredgatkcnvs:
+                        if gatkcnv.get_region_str() not in filteredgatkcnvs[samplename]:
+                            outfile.write(f"{gatkcnv.call_line}\n")
+                    else:
+                        outfile.write(f"{gatkcnv.call_line}\n")
+        file_written = True
+    except IOError:
+        print(f"Could not write GATK CNV calls to {outfileloc}")
+    finally:
+        return file_written
+
+
+def write_gatk_conrad_overlaps(gatkconraddata, outfileloc):
+    try:
+        with open(outfileloc, 'w') as outfile:
+            outfile.write("Sample\tChrom\tG_Start\tC_Start\tG_End\tC_End\n")
+            for samplename in gatkconraddata:
+                for gatkcnv in gatkconraddata[samplename]:
+                    for ccnv in gatkcnv.conrad_cnvs:
+                        outfile.write(f"{samplename}\t{gatkcnv.chrom}\t{gatkcnv.startpos}\t{ccnv.conrad_start}\t{gatkcnv.endpos}\t{ccnv.conrad_end}\n")
+    except IOError:
+        print(f"Could not write to {outfileloc}")
+
