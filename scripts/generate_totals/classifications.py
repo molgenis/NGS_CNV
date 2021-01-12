@@ -21,4 +21,6 @@ def determine_clasification_totals_label(classification):
         classlabel = "False Positive"
     if classification == "POSITIVE":
         classlabel = "True Positive"
+    if classification == "TRUE POSITIVE":
+        classlabel = "True Positive"
     return classlabel

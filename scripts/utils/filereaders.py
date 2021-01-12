@@ -1,6 +1,7 @@
 from classes.arraycnv import ArrayCnv
 from classes.exon import Exon
 from classes.probe import Probe
+from classes.gatkcall import GatkCall
 
 
 def read_sample_table(samplefileloc):
@@ -153,7 +154,7 @@ def read_classification_file(infileloc):
                 if filelinedata[0] not in gatkresultdata:
                     gatkresultdata[filelinedata[0]] = []
 
-                gatkreg = get_gatk_region(filelinedata[1])
+                gatkreg = get_cnv_region(filelinedata[1])
                 gatkgenes = filelinedata[13].split(":")
                 gatkcall = GatkCall(filelinedata[0], gatkreg[0], gatkreg[1], gatkreg[2], filelinedata[2], int(filelinedata[3]), filelinedata[4], filelinedata[9], filelinedata[10], int(filelinedata[11]), int(filelinedata[12]), gatkgenes, fileline.strip())
                 gatkresultdata[filelinedata[0]].append(gatkcall)
@@ -175,7 +176,7 @@ def read_array_cnvs(arrayfileloc):
                     if arraylinedata[0] not in array_cnv_data:
                         array_cnv_data[arraylinedata[0]] = {}
 
-                    arrayregion = get_array_region(arraylinedata[1])
+                    arrayregion = get_cnv_region(arraylinedata[1])
                     regionstr = f"{arrayregion[0]}:{arrayregion[1]}-{arrayregion[2]}"
 
                     if regionstr not in array_cnv_data[arraylinedata[0]]:
@@ -334,7 +335,7 @@ def read_exomedepth_collection(exomedepthfolder):
         exomedepth_data[sample_prefix] = sample_calls
 
 
-def get_array_region(arraycnvregion):
+def get_cnv_region(arraycnvregion):
     """Split and return the array CNV region into the chrom, start and stop.
 
     Parameters

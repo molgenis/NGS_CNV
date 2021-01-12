@@ -100,9 +100,9 @@ def run_classification(totalsparams):
     totalsparams : dict
         Set CLI parameter values
     """
-    gatkresults = ufr.read_classification_file(tg_params["infile"])
+    gatkresults = ufr.read_classification_file(totalsparams["infile"])
     totalsdata = gtcf.generate_classification_totals(gatkresults)
-    filewritten = ufw.write_classification_totals(totalsdata, tg_params["outfile"])
+    filewritten = ufw.write_classification_totals(totalsdata, totalsparams["outfile"])
     print(f"Wrote outfile?: {filewritten}")
 
 

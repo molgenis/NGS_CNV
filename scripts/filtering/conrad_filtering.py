@@ -1,3 +1,8 @@
+from classes.conradcnv import ConradCnv
+from classes.exon import Exon
+from classes.gatkcall import GatkCall
+
+
 def read_classification_file(infileloc):
     gatkresultdata = {}
     try:
@@ -186,6 +191,31 @@ def conrad_gatk_overlap(gatkcnv, conradcnv):
         Conrad CNV to check overlap for
     """
     return gatkcnv.startpos <= conradcnv.conrad_end and conradcnv.conrad_start <= gatkcnv.endpos
+
+
+def determine_gatk_filtered_by_conrad(gatkconraddata):
+    """Determine whether the genenames in 
+
+    Parameters
+    ----------
+    gatkconraddata : dict
+        GATK4 CNVs overlapping with one or more Conrad CNVs
+    """
+    conrad_filtered_gatk = {}
+    for samplename in gatkconraddata:
+        for gatkcall in gatkconraddata[samplename]:
+            gatkgenenames = gatkcall.gene_names
+            conradgenenames = gatkcall.get_conrad_cnv_genes()
+
+            shared_genenames = list(set(gatkgenenames) & set(conradgenenames))
+            ugatk_genenames = list(set(gatkgenenames) - set(conradgenenames))
+            uconrad_genenames = list(set(conradgenenames) - set(gatkgenenames))
+
+            if len(ugatk_genenames) == 0:
+                if samplename not in conrad_filtered_gatk:
+                    conrad_filtered_gatk[samplename] = []
+                conrad_filtered_gatk[samplename].append(gatkcall.get_region_str())
+    return conrad_filtered_gatk
 
 
 def get_gatk_region(gatkregion):
