@@ -80,7 +80,7 @@ def run_conradfiltering(filterparams):
     fcf.add_qxte_exon_data(filterparams["exonfile"], conradcnvs)
     gatkconradcnv = fcf.determine_gatk_conrad_overlaps(gatkresultdata, conradcnvs)
     filteredgatk = fcf.determine_gatk_filtered_by_conrad(gatkconradcnv)
-    filewritten = fcf.write_conrad_filtered_gatkcalls(gatkresults, filteredgatk, tg_params["outfile"])
+    filewritten = fcf.write_conrad_filtered_gatkcalls(gatkresultdata, filteredgatk, filterparams["outfile"])
 
 
 def run_nafiltering(filterparams):
