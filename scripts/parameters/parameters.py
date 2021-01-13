@@ -33,6 +33,29 @@ def get_classification_parameters(tool_choices):
     return vars(cmd_args.parse_args())
 
 
+def get_comparison_parameters(tool_choices):
+    """Define and return set CLI parameters for the comparison script.
+
+    Parameters
+    ----------
+    tool_choices : list of str
+        List of comparisons that can be chosen
+
+    Returns
+    -------
+    dict
+        Parameter values for comparison script
+    """
+    compare_args = argparse.ArgumentParser()
+    compare_args.add_argument("-t", "--tool", type=str, required=True, choices=tool_choices, dest="tool", help="Type of comparison to perform")
+    compare_args.add_argument("-c", "--conifer-file", type=str, dest="coniferfile", help="Path to Conifer classification file")
+    compare_args.add_argument("-e", "--exomedepth-file", type=str, dest="exomedepthfile", help="Path to ExomeDepth classification file")
+    compare_args.add_argument("-g", "--gatk-file", type=str, dest="gatkfile", help="Path to GATK4 classification file")
+    compare_args.add_argument("-o", "--outdir", type=str, dest="outdir", help="Path to write the comparison output files to")
+    compare_args.add_argument("-op", "--output-prefix", type=str, dest="outputprefix", help="Prefix to use for the output files")
+    return vars(compare_args.parse_args())
+
+
 def get_filtering_parameters(tool_choices):
     """Define and return set CLI parameters for the filtering script.
 
