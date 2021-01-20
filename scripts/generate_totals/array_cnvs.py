@@ -124,7 +124,7 @@ def array_cnvs_found(cnvdata):
                 # Add the sample name
                 if cnvcall.samplename not in array_cnvs_found:
                     array_cnvs_found[cnvcall.samplename] = []
-                if cnvcall.samplename not in alread_found:
+                if cnvcall.samplename not in already_found:
                     already_found[cnvcall.samplename] = []
 
                 # Add the array CNV
@@ -132,3 +132,4 @@ def array_cnvs_found(cnvdata):
                     array_cnvs_found[cnvcall.samplename].append(cnvcall.arraycnv)
                 if cnvcall.arraycnv not in already_found[cnvcall.samplename]:
                     already_found[cnvcall.samplename].append(cnvcall.arraycnv)
+    return array_cnvs_found

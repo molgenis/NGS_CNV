@@ -42,7 +42,7 @@ def main():
         tool2data = {}
         tool1_label = ""
         tool2_label = ""
-        arraydata = ufr.read_array_cnvs(totalsparams["arraycnvs"])
+        arraydata = ufr.read_array_cnvs(compare_parameters["arraycnvs"])
 
         # Perform comparison between Conifer and ExomeDepth classification data
         if compare_parameters["tool"] == "conifer_exomedepth":
@@ -57,7 +57,7 @@ def main():
             print("...Reading GATK4 classification data...")
             tool1data = ufr.read_classification_file(compare_parameters["gatk4-file"])
             print("...Reading Conifer classification data...")
-            tool2data = ufr.read_classification_file(compare_parameter["conifer-file"])
+            tool2data = ufr.read_classification_file(compare_parameters["conifer-file"])
 
         # Perform comparison between GATK4 and ExomeDepth classification data
         if compare_parameters["tool"] == "gatk4_exomedepth":

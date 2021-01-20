@@ -107,13 +107,17 @@ def compare_call_types(tool1_data, tool2_data):
     classification_numbers : dict
         Number of calls for TP, FP, ANI, WNI, AWNI
     """
+    classification_labels = ["True Positive", "False Positive", "Array Non-Informative", "WES Non-Informative", "Array & WES Non-Informative"]
     tool1_classification_numbers = gtc.generate_classification_totals(tool1_data)
     tool2_classification_numbers = gtc.generate_classification_totals(tool2_data)
-    classification_numbers = {"True Positive": [tool1_classification_numbers["True Positive"], tool2_classification_numbers["True Positive"]],
-                              "False Positive": [tool1_classification_numbers["False Positive"], tool2_classification_numbers["False Positive"]],
-                              "Array Non-Informative": [tool1_classification_numbers["Array Non-Informative"], tool2_classification_numbers["Array Non-Informative"]],
-                              "WES Non-Informative": [tool1_classification_numbers["WES Non-Informative"], tool2_classification_numbers["WES Non-Informative"]],
-                              "Array & WES Non-Informative": [tool1_classification_numbers["Array & WES Non-Informative"], tool2_classification_numbers["Array & WES Non-Informative"]]}
+
+    classification_numbers = {}
+    for classlabel in classification_labels:
+        classification_numbers[classlabel] = [0, 0]
+        if classlabel in tool1_classification_numbers:
+            classification_numbers[classlabel][0] = tool1_classification_numbers[classlabel]
+        if classlabel in tool2_classification_numbers:
+            classification_numbers[classlabel][1] = tool2_classification_numbers[classlabel]
     return classification_numbers
 
 
@@ -174,10 +178,10 @@ def determine_shared_acnv_types(shared_arraycnvs, arraycnvdata):
         Count per array CNV type
     """
     shared_acnv_types = {}
-    for samplename in shared_arraycnv:
+    for samplename in shared_arraycnvs:
         for shared_acnv in shared_arraycnvs[samplename]:
-            if shared_acnv in arraydata[samplename]:
-                array_type = arraydata[samplename][shared_acnv].cnv_class
+            if shared_acnv in arraycnvdata[samplename]:
+                array_type = arraycnvdata[samplename][shared_acnv].cnv_class
                 if array_type not in shared_acnv_types:
                     shared_acnv_types[array_type] = 0
                 shared_acnv_types[array_type] += 1
