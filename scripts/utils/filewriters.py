@@ -187,7 +187,7 @@ def write_comparison_data(outfilepath, comparisondata, tool1_label, tool2_label)
         True if file has been written, False if not
     """
     file_written = False
-    comparison_points = ["Total calls", "Call types", "Found array CNVs", "Shared array CNVs", "Shared array types", "Unique array CNVs", "Shared overlap"]
+    comparison_points = ["Total calls", "Call types", "Found array CNVs", "Shared array CNVs", "Shared array types", "Unique array CNVs", "Unique array types", "Shared overlap"]
 
     try:
         with open(outfilepath, "w") as outfile:
@@ -246,6 +246,19 @@ def write_comparison_data(outfilepath, comparisondata, tool1_label, tool2_label)
                         num_of_tool2_acnvs += len(comparisondata[comparepoint]["tool2"][samplename])
                         outfile.write("* " + samplename + ": " + ", ".join(comparisondata[comparepoint]["tool2"][samplename]) + "\n")
                     outfile.write(f"{tool2_label} found {num_of_tool2_acnvs} unique array CNVs\n")
+                    outfile.write("\n\n")
+
+                # Write data for unique array CNV types found per tool
+                if comparepoint == "Unique array types":
+                    outfile.write("[-Unique array CNV types per tool-]\n")
+                    outfile.write(f"Unique array types for {tool1_label}\n")
+                    for acnvtype in comparisondata[comparepoint]["tool1"]:
+                        outfile.write(acnvtype + ": " + str(comparisondata[comparepoint]["tool1"][acnvtype]) + "\n")
+                    outfile.write("\n")
+
+                    outfile.write(f"Unique array CNV types for {tool2_label}\n")
+                    for acnvtype in comparisondata[comparepoint]["tool2"]:
+                        outfile.write(acnvtype + ": " + str(comparisondata[comparepoint]["tool2"][acnvtype]) + "\n")
                     # outfile.write("\n\n")
 
                 # Write data for the overlap in shared array CNVs

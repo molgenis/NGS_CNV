@@ -48,6 +48,10 @@ def perform_comparison(tool1_label, tool1_data, tool2_label, tool2_data, arrayda
     unique_arraycnvs = determine_unique_array_cnvs(found_arraycnvs)
     comparison_data["Unique array CNVs"] = unique_arraycnvs
 
+    print("[Determine the type of uniquely found array CNV types per tool]")
+    unique_acnv_types = determine_unique_acnv_types(unique_arraycnvs, arraydata)
+    comparison_data["Unique array types"] = unique_acnv_types
+
     # print("COMPARISON: [Determine the amount of overlap with shared array CNVs]")
     return comparison_data
 
@@ -189,7 +193,7 @@ def determine_shared_acnv_types(shared_arraycnvs, arraycnvdata):
 
 
 def determine_unique_array_cnvs(found_array_cnv_data):
-    """Determine which array cNVs are unique for each tool.
+    """Determine which array CNVs are unique for each tool.
 
     Parameters
     ----------
@@ -221,3 +225,22 @@ def determine_unique_array_cnvs(found_array_cnv_data):
         if len(tool2_unique_acnvs) > 0:
             unique_array_cnvs["tool2"][samplename] = tool2_unique_acnvs
     return unique_array_cnvs
+
+
+def determine_unique_acnv_types(unique_arraycnvs, arraycnvdata):
+    """Determine and return the type of each uniquely found array CNV
+
+    Parameters
+    ----------
+    unique_arraycnvs : dict
+        Uniquely found CNVs for both tools
+    arraycnvdata : dict
+        Array CNV calls
+    """
+    unique_acnv_types = {}
+    # Calls to `determine_shared_acnv_types` but works for single tools just as well
+    tool1_uacnvtypes = determine_shared_acnv_types(unique_arraycnvs["tool1"], arraycnvdata)
+    tool2_uacnvtypes = determine_shared_acnv_types(unique_arraycnvs["tool2"], arraycnvdata)
+    unique_acnv_types["tool1"] = tool1_uacnvtypes
+    unique_acnv_types["tool2"] = tool2_uacnvtypes
+    return unique_acnv_types
