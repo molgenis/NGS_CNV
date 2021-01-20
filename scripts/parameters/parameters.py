@@ -48,11 +48,13 @@ def get_comparison_parameters(tool_choices):
     """
     compare_args = argparse.ArgumentParser()
     compare_args.add_argument("-t", "--tool", type=str, required=True, choices=tool_choices, dest="tool", help="Type of comparison to perform")
-    compare_args.add_argument("-c", "--conifer-file", type=str, dest="coniferfile", help="Path to Conifer classification file")
-    compare_args.add_argument("-e", "--exomedepth-file", type=str, dest="exomedepthfile", help="Path to ExomeDepth classification file")
-    compare_args.add_argument("-g", "--gatk-file", type=str, dest="gatkfile", help="Path to GATK4 classification file")
+    compare_args.add_argument("-a", "--arraycnvs", type=str, dest="arraycnvs", help="Path to file with array CNVs")
+    compare_args.add_argument("-c", "--conifer-file", type=str, dest="conifer-file", help="Path to Conifer classification file")
+    compare_args.add_argument("-e", "--exomedepth-file", type=str, dest="exomedepth-file", help="Path to ExomeDepth classification file")
+    compare_args.add_argument("-g", "--gatk4-file", type=str, dest="gatk4-file", help="Path to GATK4 classification file")
     compare_args.add_argument("-o", "--outdir", type=str, dest="outdir", help="Path to write the comparison output files to")
-    compare_args.add_argument("-op", "--output-prefix", type=str, dest="outputprefix", help="Prefix to use for the output files")
+    compare_args.add_argument("-op", "--output-prefix", type=str, dest="output-prefix", help="Prefix to use for the output files")
+    compare_args.add_argument("-s", "--sample-file", type=str, dest="sample-file", help="Path to sample table")
     return vars(compare_args.parse_args())
 
 

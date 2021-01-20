@@ -144,6 +144,13 @@ def read_allelic_data(allelicfileloc):
 
 
 def read_classification_file(infileloc):
+    """Read file with classified CNV calls (output file produced by `classification.py`).
+
+    Parameters
+    ----------
+    infileloc : str
+        Path to fiel with classified CNV calls
+    """
     gatkresultdata = {}
     try:
         with open(infileloc, 'r') as infile:

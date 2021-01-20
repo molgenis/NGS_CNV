@@ -100,3 +100,35 @@ def summarize_arraycnv_types(arraycnvsfound):
                 typecounts[facnv.cnv_class] = 0
             typecounts[facnv.cnv_class] = typecounts[facnv.cnv_class] + 1
     return typecounts
+
+
+def array_cnvs_found(cnvdata):
+    """Determine which array CNVs are found using read classification file data as input.
+
+    Parameters
+    ----------
+    cnvdata : dict
+        Classified CNV calls
+
+    Returns
+    -------
+    array_cnvs_found : dict
+        Found array CNVs
+    """
+    already_found = {}
+    array_cnvs_found = {}
+
+    for samplename in cnvdata:
+        for cnvcall in cnvdata[samplename]:
+            if cnvcall.arraycnv != "NA":
+                # Add the sample name
+                if cnvcall.samplename not in array_cnvs_found:
+                    array_cnvs_found[cnvcall.samplename] = []
+                if cnvcall.samplename not in alread_found:
+                    already_found[cnvcall.samplename] = []
+
+                # Add the array CNV
+                if cnvcall.arraycnv not in already_found[cnvcall.samplename]:
+                    array_cnvs_found[cnvcall.samplename].append(cnvcall.arraycnv)
+                if cnvcall.arraycnv not in already_found[cnvcall.samplename]:
+                    already_found[cnvcall.samplename].append(cnvcall.arraycnv)

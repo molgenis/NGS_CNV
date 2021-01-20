@@ -169,3 +169,87 @@ def write_similar_fpregions(outfileloc, simfpregions):
                     outfile.write(f"{simregion}\t{overlapregion}\t{simfpregions[simregion].overlaps[overlapregion]}\n")
     except IOError:
         print(f"Could not write similar False Positive region to {outfileloc}")
+
+
+def write_comparison_data(outfilepath, comparisondata, tool1_label, tool2_label):
+    """Write comparison results to a specified output file.
+
+    Parameters
+    ----------
+    outfilepath :str
+        Path to write output file to
+    comparisondata : dict
+        Comparison data to write to file
+
+    Returns
+    -------
+    file_written : bool
+        True if file has been written, False if not
+    """
+    file_written = False
+    comparison_points = ["Total calls", "Call types", "Found array CNVs", "Shared array CNVs", "Shared array types", "Unique array CNVs", "Shared overlap"]
+
+    try:
+        with open(outfilepath, "w") as outfile:
+            outfile.write(f"Results for comparison between {tool1_label} and {tool2_label}\n\n")
+
+            for comparepoint in comparison_points:
+                # Write data for the total call comparison.
+                if comparepoint == "Total calls":
+                    outfile.write("Total calls made:\n")
+                    outfile.write(f"{tool1_label}: " +comparisondata[comparepoint][0]+ "\n")
+                    outfile.write(f"{tool2_label}: " +comparisondata[comparepoint][1]+ "\n")
+                    outfile.write("\n\n")
+
+                # Write data for the call type comparison
+                if comparepoint == "Call types":
+                    outfile.write("Call types made:\n")
+                    for classificationlabel in comparisondata[comparepoint]:
+                        outfile.write(f"{classificationlabel}: {comparisondata[comparepoint][classificationlabel][0]} | {comparisondata[comparepoint][classificationlabel][1]}\n")
+                    outfile.write("\n\n")
+
+                # Write data for the shared found array CNVs
+                if comparepoint == "Shared array CNVs":
+                    num_of_shared_acnvs = 0
+                    outfile.write("Array CNVs found by both")
+                    for samplename in comparisondata[comparepoint]:
+                        num_of_shared_acnvs += len(comparisondata[comparepoint][samplename])
+                        outfile.write("[" + samplename + "]: " + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} and {tool2_label} both identified {num_of_shared_acnvs} array CNVs\'n")
+                    outfile.write("\n\n")
+
+                # Write data for thje shared array CNV types
+                if comparepoint == "Shared array types":
+                    outfile.write("Array CNV types found by both:\n")
+                    for acnvtype in comparisondata[comparepoint]:
+                        outfile.write(f"{acnvtype}: {comparisondata[comparepoint][acnvtype]}\n")
+                    outfile.write("\n\n")
+
+                # Write data for unique found array CNVs
+                if comparepoint == "Unique array CNVs":
+                    outfile.write("Unique array CNVs found per tool:\n")
+
+                    # Write the unique array CNVs for tool 1
+                    outfile.write(f"Unique array CNVs found by {tool1_label}\n")
+                    num_of_tool1_acnvs = 0
+                    for samplename in comparisondata[comparepoint]["tool1"]:
+                        num_of_tool1_acnvs += len(comparisondata[comparepoint]["tool1"][samplename])
+                        outfile.write(samplename + ": " + ", ".join(comparisondata[comparepoint]["tool1"][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} found {num_of_tool1_acnvs} unique array CNVs\n")
+
+                    # Write the unique array CNVs for tool 2
+                    outfile.write(f"Unique array CNVs found by {tool2_label}\n")
+                    num_of_tool2_acnvs = 0
+                    for samplename in comparisondata[comparepoint]["tool2"]:
+                        num_of_tool2_acnvs += len(comparisondata[comparepoint]["tool2"][samplename])
+                        outfile.write(samplename + ": " + ", ".join(comparisondata[comparepoint]["tool2"][samplename]) + "\n")
+                    outfile.write(f"{tool2_label} found {num_of_tool2_acnvs} unique array CNVs\n")
+                    outfile.write("\n\n")
+
+                # Write data for the overlap in shared array CNVs
+                # if comparepoint == "Shared overlap":
+        file_written = True
+    except IOError:
+        print("Could not write comparison data to output file")
+    finally:
+        return file_written
