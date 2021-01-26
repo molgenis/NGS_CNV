@@ -71,10 +71,15 @@ def add_qxte_exon_data(exonfileloc, conrad_cnv_data):
         with open(exonfileloc, 'r') as exonfile:
             for exonline in exonfile:
                 exonlinedata = exonline.strip().split("\t")
-                qxte_exon = Exon(exonlinedata[0], int(exonlinedata[1]), int(exonlinedata[2]), exonlinedata[3])
 
-                if exonlinedata[0] in conrad_cnv_data:
-                    add_exons_to_conradcnv(conrad_cnv_data[exonlinedata[0]], qxte_exon)
+                # Form the exon chromosome name
+                exonchromname = exonlinedata[0]
+                if not exonchromname.startswith("chr"):
+                    exonchromname = f"chr{exonchromname}"
+
+                qxte_exon = Exon(exonchromname, int(exonlinedata[1]), int(exonlinedata[2]), exonlinedata[3])
+                if exonchromname in conrad_cnv_data:
+                    add_exons_to_conradcnv(conrad_cnv_data[exonchromname], qxte_exon)
     except IOError:
         print(f"Could not read {exonfileloc}")
 
