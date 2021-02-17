@@ -29,7 +29,7 @@ import utils.filewriters as ufw
 # Make parameter defining variables
 TOOL_CHOICES = ["conifer", "exomedepth", "gatk"]
 REQUIRED_PARAMS = {"conifer": ["arrayfile", "exonsfile", "infile", "probesfile", "samples"],
-                   "exomedepth": ["arrayfile", "exonsfile", "indir", "probesfile", "samples"],
+                   "exomedepth": ["arrayfile", "exonsfile", "infile", "probesfile", "samples"],
                    "gatk": ["arrayfile", "exonsfile", "indir", "probesfile", "samples"]}
 OPTIONAL_PARAMS = {"conifer": ["numofexons", "numofprobes"],
                    "exomedepth": ["numofexons", "numofprobes"],
@@ -119,14 +119,17 @@ def main():
             # EXOMEDEPTH CNV CLASSIFICATION
             if cmd_argvalues["tool"] == "exomedepth":
                 print("...Start reading the ExomeDepth data...")
-                exomedepth_data = read_exomedepth_data()
+                exomedepth_data = read_combined_exomedepth_data(cmd_argvalues["infile"], sample_data, exon_data, probe_data)
                 print(f"...Read ExomeDepth CNV data for {len(exomedepth_data)} samples...")
+
                 print("...Evaluating ExomeDepth CNVs...")
-                evaluate_cnv_calls()
+                evaluate_cnv_calls(exomedepth_data, array_data, cmd_argvalues["numofexons"], cmd_argvalues["numofprobes"], cmd_argvalues["percentoverlap"], EXOMEDEPTH_CALL_TRANSLATIONS)
+
                 print("...Classifying leftover array CNVs...")
-                array_classify_leftovers()
+                array_classify_leftovers(array_data)
+
                 print("...Writing all ExomeDepth classifications to file...")
-                file_written = write_cnv_results()
+                file_written = write_cnv_classifications(exomedepth_data, cmd_argvalues["output"], cmd_argvalues["filterneutrals"], cmd_argvalues["cnvsize"], EXOMEDEPTH_CALL_TRANSLATIONS, "ExomeDepth")
                 print(f"...Outout file written?: {file_written}...")
             print("DONE!")
 
@@ -786,6 +789,47 @@ def read_exomedepth_data(edfileloc, exomedepthdata, samplename, samplepseudo, pr
                 exomedepthdata[samplename].append(edcall)
     except IOError:
         print(f"Could not read ExomeDepth calls file {edfileloc}")
+    finally:
+        return exomedepthdata
+
+
+def read_combined_exomedepth_data(exdresultsfile, sampledata, exondata, probedata):
+    """Read the combined ExomeDepth results file.
+
+    Parameters
+    ----------
+    exd_resultsfile : str
+        Path to combined ExomeDepth file
+    sampledata : dict
+        Sample translation table
+    exondata : dict
+        Exon data per chromosome
+    probedata : dict
+        Probe data per chromosome
+    """
+    exomedepthdata = {}
+    try:
+        with open(exdresultsfile, 'r') as exdfile:
+            next(exdfile)
+            for exdline in exdfile:
+                exdlinedata = exdline.strip().split("\t")
+
+                # Get the sample pseudo name
+                sample_pseudo = ""
+                if exdlinedata[0] in sampledata:
+                    sample_pseudo = sampledata[exdlinedata[0]]
+
+                # Add an entry in the exomedepth data
+                if sample_pseudo != "" and sample_pseudo not in exomedepthdata:
+                    exomedepthdata[sample_pseudo] = []
+
+                # Create the ExomeDepthCall
+                exdcall = ExomeDepthCall(exdlinedata[0], sample_pseudo, int(exdlinedata[1]), int(exdlinedata[2]), exdlinedata[3], int(exdlinedata[4]), int(exdlinedata[5]), int(exdlinedata[6]), f"chr{exdlinedata[7]}", exdlinedata[8], float(exdlinedata[9]), int(exdlinedata[10]), int(exdlinedata[11]), float(exdlinedata[12]), exdlinedata[13])
+                exdcall.exons = clcl.add_exons(exdcall, exondata)
+                exdcall.probes = clcl.add_probes(exdcall, probedata)
+                exomedepthdata[sample_pseudo].append(exdcall)
+    except IOError:
+        print(f"Could not read combined ExomeDepth results file {exdresultsfile}")
     finally:
         return exomedepthdata
 

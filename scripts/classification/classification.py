@@ -9,10 +9,11 @@ def add_probes(cnv, probes):
         Probe data
     """
     probes_to_add = []
-    chromprobes = probes[cnv.cnv_chrom]
-    for chromprobe in chromprobes:
-        if cnv.segment_overlap(chromprobe.probe_start, chromprobe.probe_end):
-            probes_to_add.append(chromprobe)
+    if cnv.cnv_chrom in probes:
+        chromprobes = probes[cnv.cnv_chrom]
+        for chromprobe in chromprobes:
+            if cnv.segment_overlap(chromprobe.probe_start, chromprobe.probe_end):
+                probes_to_add.append(chromprobe)
     return probes_to_add
 
 
