@@ -53,6 +53,7 @@ def filter_by_size(inputfile, outfileloc, callcolumn, minimumsize):
                     if int(filelinedata[index_field]) >= minimumsize:
                         outfile.write(fileline)
         outfile.close()
+        wrote_file = True
     except IOError:
         print("Could not filter input file.")
     finally:
