@@ -10,7 +10,7 @@ try:
         for altline in altsliced:
             altlinedata = altline.strip().split("\t")
             region_str = f"{altlinedata[0]}:{altlinedata[1]}-{altlinedata[2]}"
-            if region_str not in :
+            if region_str not in alt_sliced_bed:
                 alt_sliced_bed[region_str] = altlinedata[3]
 except IOError:
     print(f"Could not open {sys.argv[1]}")
@@ -23,7 +23,7 @@ if len(alt_sliced_bed) > 0:
             for hcline in hcbedfile:
                 hclinedata = hcline.strip().split("\t")
                 hcregion = f"{hclinedata[0]}:{hclinedata[1]}-{hclinedata[2]}"
-                if hcregion in alt_slied_bed:
+                if hcregion in alt_sliced_bed:
                     print(f"{hclinedata[0]}\t{hclinedata[1]}\t{hclinedata[2]}\t{alt_sliced_bed[hcregion]}")
     except IOError:
         print(f"Could not open HC_target bed file {sys.argv[2]}")
