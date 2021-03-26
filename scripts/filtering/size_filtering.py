@@ -38,8 +38,8 @@ def filter_by_size(inputfile, outfileloc, callcolumn, minimumsize):
     wrote_file : bool
         True if output file has been written, False if not
     """
+    wrote_file = False
     try:
-        wrote_file = False
         outfile = open(outfileloc, 'w')
 
         with open(inputfile, 'r') as infile:
