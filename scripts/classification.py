@@ -685,7 +685,7 @@ def classify_cnv(cnvcall, arraycnvs, minexons, minprobes, minoverlap, translatio
     match_with_array = False
     for arraycnv in arraycnvs:
         if cnvcall.cnv_chrom == arraycnv.cnv_chrom and cnvcall.cnv_overlap(arraycnv):
-            cnv_overlap = cnvcall.get_percent_overlap(range(arraycnv.cnv_start, arraycnv.cnv_end))
+            cnv_overlap = cnvcall.get_percent_overlap(arraycnv.cnv_start, arraycnv.cnv_end)
             if cnv_overlap >= minoverlap:
                 match_with_array = True
                 cnvcall.classification = ["TRUE POSITIVE", f"{len(cnvcall.exons)}", f"{len(cnvcall.probes)}"]

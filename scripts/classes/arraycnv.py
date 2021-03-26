@@ -38,6 +38,23 @@ class ArrayCnv:
     def cnv_overlap(self, other_cnv):
         return self.cnv_start <= other_cnv.cnv_end and other_cnv.cnv_start <= self.cnv_end
 
+    def get_percent_overlap(self, acnv_start, acnv_end):
+        acnvlength = acnv_end - acnv_start
+        start_diff = acnv_start - self.cnv_start
+        end_diff = acnv_end - self.cnv_end
+
+        if start_diff <= 0 & end_diff >= 0:
+            return 100
+        if start_diff > 0 & end_diff < 0:
+            return 100
+
+        overlap_size = acnv_end - acnv_start
+        if (start_diff >= 0 & end_diff >= 0) or (start_diff <= 0 & end_diff <= 0):
+            overlap_size = overlap_size - abs(start_diff)
+            overlap_size = overlap_size - abs(end_diff)
+        overlap_perc = (overlap_size / acnvlength) * 100
+        return round(overlap_perc, 3)
+
     def num_of_wes_cnvs(self):
         return len(self.wes_cnvs)
 

@@ -38,23 +38,23 @@ class ExomeDepthCall:
             return self.cnv_start <= othercnv.cnv_end and othercnv.cnv_start <= self.cnv_end
         return False
 
-    def get_percent_overlap(self, arraycnv_range):
-        cnv_range = range(self.cnv_start, self.cnv_end)
-        start_diff = arraycnv_range[0] - cnv_range[0]
-        end_diff = arraycnv_range[-1] - cnv_range[-1]
+    def get_percent_overlap(self, acnv_start, acnv_end):
+        acnvlength = acnv_end - acnv_start
+        start_diff = acnv_start - self.cnv_start
+        end_diff = acnv_end - self.cnv_end
 
-        if start_diff > 0 and end_diff < 0:
-                return 100
-        if start_diff == 0 and end_diff == 0:
-                return 100
+        if start_diff <= 0 & end_diff >= 0:
+            return 100
+        if start_diff > 0 & end_diff < 0:
+            return 100
 
-        overlap_size = len(arraycnv_range)
-        if start_diff < 0:
-                overlap_size = overlap_size - abs(start_diff)
-                if end_diff > 0:
-                        overlap_size = overlap_size - end_diff
-        overlap_perc = (overlap_size / len(arraycnv_range)) * 100
+        overlap_size = acnv_end - acnv_start
+        if (start_diff >= 0 & end_diff >= 0) or (start_diff <= 0 & end_diff <= 0):
+            overlap_size = overlap_size - abs(start_diff)
+            overlap_size = overlap_size - abs(end_diff)
+        overlap_perc = (overlap_size / acnvlength) * 100
         return round(overlap_perc, 3)
+
 
     def get_gene_names(self):
         genelist = []
