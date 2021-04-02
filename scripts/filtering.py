@@ -75,12 +75,18 @@ def run_ccnvfiltering(filterparams):
 
 
 def run_conradfiltering(filterparams):
+    print("...Reading classification data...")
     gatkresultdata = fcf.read_classification_file(filterparams["infile"])
+    print("...Reading Conrad CNV data...")
     conradcnvs = fcf.read_conrad_data(filterparams["conradfile"])
+    print("...Linking exons fropm BED to Conrad CNVs...")
     fcf.add_qxte_exon_data(filterparams["exonfile"], conradcnvs)
+    print("...Determining classification calls Conrad overlap...")
     gatkconradcnv = fcf.determine_gatk_conrad_overlaps(gatkresultdata, conradcnvs)
+    print("...Filtering classification calls with Conrad CNVs...")
     filteredgatk = fcf.determine_gatk_filtered_by_conrad(gatkconradcnv)
     filewritten = fcf.write_conrad_filtered_gatkcalls(gatkresultdata, filteredgatk, filterparams["outfile"])
+    print(f"...Wrote output file: {filewritten}...")
 
 
 def run_nafiltering(filterparams):

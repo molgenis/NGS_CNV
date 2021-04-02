@@ -100,10 +100,12 @@ def run_classification(totalsparams):
     totalsparams : dict
         Set CLI parameter values
     """
+    print("...Reading classified CNV calls...")
     gatkresults = ufr.read_classification_file(totalsparams["infile"])
+    print("...Generating classification label totals...")
     totalsdata = gtcf.generate_classification_totals(gatkresults)
     filewritten = ufw.write_classification_totals(totalsdata, totalsparams["outfile"])
-    print(f"Wrote outfile?: {filewritten}")
+    print(f"...Wrote outfile?: {filewritten}...")
 
 
 def run_fpregions(totalsparams):

@@ -122,6 +122,7 @@ def get_util_parameters(tool_choices):
     util_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to output file")
     util_args.add_argument("-r", "--region", dest="region", nargs="+", type=str, help="Region(s) to use.")
     util_args.add_argument("-p", "--padding", dest="padding", default=10000, type=int, help="Amount of padding to add left and right of region(s)")
+    util_args.add_argument("-b", "--bedfile", dest="bedfile", type=str, help="Path to BED file")
     return vars(util_args.parse_args())
 
 

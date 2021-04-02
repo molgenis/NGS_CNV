@@ -1,4 +1,4 @@
-import os
+ import os
 import sys
 import argparse
 
@@ -6,6 +6,7 @@ import argparse
 import parameters.parameters as parpar
 
 # Import util scripts
+import utils.arraycnv_bedregions as acbr
 import utils.filereaders as ufr
 import utils.filewriters as ufw
 import utils.filter_xy_from_intervallist as ufxyfi
@@ -15,8 +16,9 @@ import utils.select_plot_region as uspr
 
 
 # Create some general variables
-TOOL_CHOICES = ["filterxy", "fixarray", "getsnplog2ratios", "selectplotregion"]
-REQUIRED_ARGS = {"filterxy": ["intervallist", "outfile"],
+TOOL_CHOICES = ["arraybedregion", "filterxy", "fixarray", "getsnplog2ratios", "selectplotregion"]
+REQUIRED_ARGS = {"arraybedregion": ["bedfile", "region"]
+                 "filterxy": ["intervallist", "outfile"],
                  "fixarray": ["infile", "outfile"],
                  "getsnplog2ratios": ["allelicfile", "intervallist", "outfile"],
                  "selectplotregion": ["intervallist", "outfile", "padding", "region"]}
@@ -41,6 +43,10 @@ def main():
     incorrectparams = parpar.parameters_are_ok(utilparams, REQUIRED_PARAMS, PARAM_TYPES)
 
     if len(incorrectparams) == 0:
+        # Display BED regions overlapping with an array CNV region
+        if utilparams["tool"] == "arraybedregion":
+            run_arraycnv_bedregions(utilparams)
+
         # Filter X and Y chromosomes from an interval list file
         if utilparams["tool"] == "filterxy":
             ufxyfi.filter_intervallist(utilparams["intervallist"], utilparams["outfile"])
@@ -78,6 +84,14 @@ def run_getsnplog2ratios(utilparams):
     allelicdata = ufr.read_allelic_data(utilparams["allelicfile"])
     intervaldata = ufr.read_interval_data(utilparams["intervallist"])
     ugsl2r.collect_allelic_log2_values(allelicdata, intervaldata, utilparams["outfile"])
+
+
+def run_arraycnv_bedregions(utilparams):
+    print("...Reading BED file data...")
+    bedfiledata = ufr.read_exon_data(utilparams["bedfile"])
+    print("...Collecting overlapping BED regions...")
+    arraybedregions = acbr.get_arraycnv_bedregions(bedfiledata, utilparams["region"])
+    acbr.display_bedregions(arraybedregions, utilparams["region"])
 
 
 if __name__ == "__main__":
