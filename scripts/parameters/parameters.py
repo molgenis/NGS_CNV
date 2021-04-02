@@ -113,6 +113,7 @@ def get_util_parameters(tool_choices):
     ----------
     tool_choices : list of str
     """
+    INTYPE_CHOICES = ["cac", "tsv", "seg"]
     util_args = argparse.ArgumentParser()
     util_args.add_argument("-t", "--tool", dest="tool", type=str, choices=tool_choices, required=True, help="Specified util/tool to run")
     util_args.add_argument("-i", "--infile", dest="infile", type=str, help="Path to non interval or allelic input file")
@@ -120,7 +121,7 @@ def get_util_parameters(tool_choices):
     util_args.add_argument("-il", "--intervallist", dest="intervallist", type=str, help="Path to intervallist file")
     util_args.add_argument("-it", "--intype", dest="intype", type=str, required=False, choices=INTYPE_CHOICES, help="Input file type")
     util_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to output file")
-    util_args.add_argument("-r", "--region", dest="region", nargs="+", type=str, help="Region(s) to use.")
+    util_args.add_argument("-r", "--region", dest="region", type=str, help="Region(s) to use.")
     util_args.add_argument("-p", "--padding", dest="padding", default=10000, type=int, help="Amount of padding to add left and right of region(s)")
     util_args.add_argument("-b", "--bedfile", dest="bedfile", type=str, help="Path to BED file")
     return vars(util_args.parse_args())

@@ -1,4 +1,4 @@
- import os
+import os
 import sys
 import argparse
 
@@ -17,19 +17,20 @@ import utils.select_plot_region as uspr
 
 # Create some general variables
 TOOL_CHOICES = ["arraybedregion", "filterxy", "fixarray", "getsnplog2ratios", "selectplotregion"]
-REQUIRED_ARGS = {"arraybedregion": ["bedfile", "region"]
-                 "filterxy": ["intervallist", "outfile"],
-                 "fixarray": ["infile", "outfile"],
-                 "getsnplog2ratios": ["allelicfile", "intervallist", "outfile"],
-                 "selectplotregion": ["intervallist", "outfile", "padding", "region"]}
-OPTIONAL_ARGS = {}
+REQUIRED_PARAMS = {"arraybedregion": ["bedfile", "region"],
+                   "filterxy": ["intervallist", "outfile"],
+                   "fixarray": ["infile", "outfile"],
+                   "getsnplog2ratios": ["allelicfile", "intervallist", "outfile"],
+                   "selectplotregion": ["intervallist", "outfile", "padding", "region"]}
+OPTIONAL_PARAMS = {}
 PARAM_TYPES = {"infile": "inputfile",
                "allelicfile": "inputfile",
                "intervallist": "inputfile",
                "intype": "string",
                "outfile": "outputfile",
                "region": "string",
-               "padding": "integer"}
+               "padding": "integer",
+               "bedfile": "inputfile"}
 XY_CHROMS = ("X", "x", "Y", "y", "chrX", "chrx", "chrY", "chry")
 INTYPE_CHOICES = ["cac", "tsv", "seg"]
 TOOL_USAGE = {"filterxy": "python utils.py -il intervallist.txt -o no_xy_intervallist.txt",
@@ -39,7 +40,7 @@ TOOL_USAGE = {"filterxy": "python utils.py -il intervallist.txt -o no_xy_interva
 
 
 def main():
-    utilparams = parpar.get_util_parameters()
+    utilparams = parpar.get_util_parameters(TOOL_CHOICES)
     incorrectparams = parpar.parameters_are_ok(utilparams, REQUIRED_PARAMS, PARAM_TYPES)
 
     if len(incorrectparams) == 0:
