@@ -34,3 +34,4 @@ def display_bedregions(bedregions, arraycnvregion):
     print(f"BED regions overlapping with array CNV {arraycnvregion}")
     for bedregion in bedregions:
         print(f"{bedregion.exon_chrom}\t{bedregion.exon_start}\t{bedregion.exon_end}\t{bedregion.gene_name}")
+    print(f"Overlap: {bedregions[0].exon_start} - {bedregions[-1].exon_end} | Total size: {bedregions[-1].exon_end - bedregions[0].exon_start}")
