@@ -21,13 +21,15 @@ def main():
         with open(gnomad_params["infile"], 'r') as intervallist:
             for intervalline in intervallist:
                 if not intervalline.startswith("@"):
+                    intervaldata = intervalline.strip().split()
                     if include_all_chroms:
-                        bedfile.write(intervalline)
+                        bedfile.write(f"{intervaldata[0]}\t{int(intervaldata[1])-1}\t{intervaldata[2]}\n")
                     else:
-                        intervaldata = intervalline.strip().split()
                         if intervaldata[0] in gnomad_params["chromosomes"]:
-                            bedfile.write(intervalline)
+                            bedfile.write(f"{intervaldata[0]}\t{int(intervaldata[1])-1}\t{intervaldata[2]}\n")
         bedfile.close()
+    except IOError:
+        print("Could not convert interval list to BED file :(")
 
 
 if __name__ == "__main__":
