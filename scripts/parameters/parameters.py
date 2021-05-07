@@ -54,7 +54,7 @@ def get_comparison_parameters(tool_choices):
     compare_args.add_argument("-e", "--exomedepth-file", type=str, dest="exomedepth-file", help="Path to ExomeDepth classification file")
     compare_args.add_argument("-e2", "--exomedepth-file2", type=str, dest="exomedepth-file2", help="Path to second ExomeDepth classification file")
     compare_args.add_argument("-g", "--gatk4-file", type=str, dest="gatk4-file", help="Path to GATK4 classification file")
-    compare_args.add_argument("-g2", "--gatk4-file2", type="str", dest="gatk4-file2", help="Path to the second GATK4 classification file")
+    compare_args.add_argument("-g2", "--gatk4-file2", type=str, dest="gatk4-file2", help="Path to the second GATK4 classification file")
     compare_args.add_argument("-o", "--outdir", type=str, dest="outdir", help="Path to write the comparison output files to")
     compare_args.add_argument("-op", "--output-prefix", type=str, dest="output-prefix", help="Prefix to use for the output files")
     compare_args.add_argument("-s", "--sample-file", type=str, dest="sample-file", help="Path to sample table")

@@ -24,9 +24,10 @@ REQUIRED_PARAMS = {"gatk4_conifer": ["gatk4-file", "conifer-file", "outdir", "ou
                    "conifer_exomedepth": ["conifer-file", "exomedepth-file", "outdir", "output-prefix"],
                    "gatk4_gatk4": ["gatk4-file", "gatk4-file2", "arraycnvs", "outdir", "output-prefix"],
                    "conifer_conifer": ["conifer-file", "conifer-file2", "arraycnvs", "outdir", "output-prefix"],
-                   "exomedepth_exomedepth": ["exomdepth-file", "exomedepth-file2", "arraycnvs", "outdir", "output-prefix"]}
+                   "exomedepth_exomedepth": ["exomedepth-file", "exomedepth-file2", "arraycnvs", "outdir", "output-prefix"]}
 OPTIONAL_PARAMS = {}
-PARAM_TYPES = {"conifer-file": "inputfile",
+PARAM_TYPES = {"arraycnvs": "inputfile",
+               "conifer-file": "inputfile",
                "conifer-file2": "inputfile",
                "exomedepth-file": "inputfile",
                "exomedepth-file2": "inputfile",
@@ -93,13 +94,13 @@ def main():
             tool1data = ufr.read_classification_file(compare_parameters["conifer-file2"])
 
         # Perform comparison between two ExomeDepth classification data
-        if compare_parameters["tool"] == "conifer_conifer":
+        if compare_parameters["tool"] == "exomedepth_exomedepth":
             tool1_label = "ExomeDepth_1"
             tool2_label = "ExomeDepth_2"
             print("...Reading first ExomeDepth classification data...")
             tool1data = ufr.read_classification_file(compare_parameters["exomedepth-file"])
             print("...Reading second ExomeDepth classification data...")
-            tool1data = ufr.read_classification_file(compare_parameters["exomedepth-file2"])
+            tool2data = ufr.read_classification_file(compare_parameters["exomedepth-file2"])
 
         print(f"...Perform the comparison between {tool1_label} and {tool2_label}...")
         comparisondata = comcom.perform_comparison(tool1_label, tool1data, tool2_label, tool2data, arraydata)
