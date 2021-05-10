@@ -268,3 +268,49 @@ def write_comparison_data(outfilepath, comparisondata, tool1_label, tool2_label)
         print("Could not write comparison data to output file")
     finally:
         return file_written
+
+
+def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
+    try:
+        file_written = False
+        comparison_points = ["Total fps", "Shared fps", "Unique fps"]
+
+        with open(outfilepath, 'w') as outfile:
+            outfile.write(f"Results for comparison between {tool1_label} and {tool2_label}\n\n")
+
+            for comparepoint in comparison_points:
+                if comparepoint == "Total fps":
+                    outfile.write("[-Total False Positive calls-]\n")
+                    outfile.write(f"{tool1_label}: {comparisondata[comparepoint][0]}\n")
+                    outfile.write(f"{tool2_label}: {comparisondata[comparepoint][1]}\n")
+                    outfile.write("\n\n")
+
+                if comparepoint == "Shared fps":
+                    num_of_shared_fps = 0
+                    outfile.write("[-Shared False Positive calls-]\n")
+                    for samplename in comparisondata[comparepoint]:
+                        shared_sample_fps = len(comparisondata[comparepoint][samplename])
+                        num_of_shared_fps += shared_sample_fps
+                        outfile.write("* [" + samplename + "]: " + "{" +str(shared_sample_fps)+ "}\t" + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} and {tool2_label} both identified {num_of_shared_fps} False Positive calls\n")
+                    putfile.write("\n\n")
+
+                if comparepoint == "Unique fps":
+                    outfile.write(f"[-Unique False Positive calls found by {tool1_label}-]\n")
+                    num_of_tool1_fps = 0
+                    for samplename in comparisondata[comparepoint]["tool1"]:
+                        tool1_sample_ufps = len(comparisondata[comparepoint]["tool1"][samplename])
+                        num_of_tool1_fps += tool1_sample_ufps
+                        outfile.write("* [" +samplename+ "]: {" +str(tool1_sample_ufps)+ "}\t" + ", ".join(comparisondata[comparepoint]["tool1"][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} found {num_of_tool1_fps} unique False Positive calls\n\n")
+
+                    outfile.write(f"[-Unique False Positive calls found by {tool2_label}-]\n")
+                    num_of_tool2_fps = 0
+                    for samplename in comparisondata[comparepoint]["tool2"]:
+                        tool2_sample_ufps = len(comparisondata[comparepoint]["tool2"][samplename])
+                        num_of_tool2_fps += tool2_sample_ufps
+                        outfile.write("* [" +samplename+ "]: {" +str(tool2_sample_ufps)+ "}\t" + ", ".join(comparisondata[comparepoint]["tool2"][samplename]) + "\n")
+                    outfile.write(f"{tool2_label} found {num_of_tool2_fps} unique False Positive calls\n\n")
+        file_written = True
+    except IOError:
+        print("Could not write false positive comparison data to output file")

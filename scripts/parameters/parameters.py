@@ -58,6 +58,10 @@ def get_comparison_parameters(tool_choices):
     compare_args.add_argument("-o", "--outdir", type=str, dest="outdir", help="Path to write the comparison output files to")
     compare_args.add_argument("-op", "--output-prefix", type=str, dest="output-prefix", help="Prefix to use for the output files")
     compare_args.add_argument("-s", "--sample-file", type=str, dest="sample-file", help="Path to sample table")
+    compare_args.add_argument("-1", "--file1", type=str, dest="file1", help="Path to first CNV calling classification file")
+    compare_args.add_argument("-2", "--file2", type=str, dest="file2", hlep="Path to second CNV calling classification file")
+    compare_args.add_argument("-l1", "--label1", type=str, dest="label1", help="Label to use for the first tool")
+    compare_args.add_argument("-l2", "--label2", type=str, dest="label2", help="Label to use for the second tool")
     return vars(compare_args.parse_args())
 
 

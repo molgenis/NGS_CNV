@@ -244,3 +244,83 @@ def determine_unique_acnv_types(unique_arraycnvs, arraycnvdata):
     unique_acnv_types["tool1"] = tool1_uacnvtypes
     unique_acnv_types["tool2"] = tool2_uacnvtypes
     return unique_acnv_types
+
+
+def compare_fps(tool1_label, tool1_data, tool2_label, tool2_data):
+    """Compare the False Positives between classification data of tool1 and tool2.
+
+    Parameters
+    ----------
+    tool1_label : str
+        Name for the first tool
+    tool1_data : dict
+        Classified CNV calls for the first tool
+    tool2_label : str
+        Name for the second tool
+    tool2_data : dict
+        Classified CNV calls for the second tool
+    """
+    fp_data = {}
+
+    print("[COMPARISON]: Gather False Positive calls for both tools")
+    tool1_fps = get_fp_regions(tool1_data)
+    tool2_fps = get_fp_regions(tool2_data)
+
+    print("[COMPARISON]: Determine total number of False Positive calls per tool")
+    fp_data["Total fps"] = get_total_fps(tool1_fps, tool2_fps)
+    print("[COMPARISON]: Determine the number of shared False Positive calls per tool")
+    fp_data["Shared fps"] = get_shared_fps(tool1_fps, tool2_fps)
+    print("[COMPARISON]: Determine the number of unique False Positive calls per tool")
+    fp_data["Unique fps"] = get_unique_fps(tool1_fps, tool2_fps)
+
+
+def get_fp_regions(tooldata):
+    """Get and return False Positive calls for the selected tool.
+
+    Parameters
+    ----------
+    tooldata : dict
+        Tool classification data
+
+    Returns
+    -------
+    tool_fps : list of str
+        False Positives for the tool
+    """
+    tool_fps = {}
+    for samplename in tooldata:
+        for cnvcall in tooldata[samplename]:
+            if cnvcall.classification== "False Positive":
+                if samplename not in tool_fps:
+                    tools_fps[samplename] = []
+                tool_fps[samplename].append(cnvcall.get_region_str())
+    return tool_fps
+
+
+def get_total_fps(tool1fps, tool2fps):
+    fps1 = 0
+    for samplename in tool1fps:
+        fps1 += len(tool1fps[samplename])
+
+    fps2 = 0
+    for samplename in tool2fps:
+        fps2 += len(tool2fps[samplename])
+    return [fps1, fps2]
+
+
+def get_shared_fps(tool1data, tool2data):
+    shared_fps = {}
+    for samplename in set(tool1data.keys()) & set(tool2data.keys()):
+        shared_fps[samplename] = set(tool1data[samplename]) & set(tool2data[samplename])
+    return shared_fps
+
+
+def get_unique_fps(tool1data, tool2data):
+    unique_fps = {}
+    unique_fps["tool1"] = {}
+    unique_fps["tool2"] = {}
+
+    for samplename in set(tool1data.keys()) & set(tool2data.keys()):
+        unique_fps["tool1"][samplename] = set(tool1data[samplename]) - set(tooldata2[samplename])
+        unique_fps["tool2"][samplename] = set(tool2data[samplename]) - set(tooldata1[samplename])
+    return unique_fps
