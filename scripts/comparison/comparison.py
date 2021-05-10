@@ -272,6 +272,7 @@ def compare_fps(tool1_label, tool1_data, tool2_label, tool2_data):
     fp_data["Shared fps"] = get_shared_fps(tool1_fps, tool2_fps)
     print("[COMPARISON]: Determine the number of unique False Positive calls per tool")
     fp_data["Unique fps"] = get_unique_fps(tool1_fps, tool2_fps)
+    return fp_data
 
 
 def get_fp_regions(tooldata):
@@ -290,9 +291,9 @@ def get_fp_regions(tooldata):
     tool_fps = {}
     for samplename in tooldata:
         for cnvcall in tooldata[samplename]:
-            if cnvcall.classification== "False Positive":
+            if cnvcall.classification == "FALSE POSITIVE":
                 if samplename not in tool_fps:
-                    tools_fps[samplename] = []
+                    tool_fps[samplename] = []
                 tool_fps[samplename].append(cnvcall.get_region_str())
     return tool_fps
 
@@ -321,6 +322,6 @@ def get_unique_fps(tool1data, tool2data):
     unique_fps["tool2"] = {}
 
     for samplename in set(tool1data.keys()) & set(tool2data.keys()):
-        unique_fps["tool1"][samplename] = set(tool1data[samplename]) - set(tooldata2[samplename])
-        unique_fps["tool2"][samplename] = set(tool2data[samplename]) - set(tooldata1[samplename])
+        unique_fps["tool1"][samplename] = set(tool1data[samplename]) - set(tool2data[samplename])
+        unique_fps["tool2"][samplename] = set(tool2data[samplename]) - set(tool1data[samplename])
     return unique_fps

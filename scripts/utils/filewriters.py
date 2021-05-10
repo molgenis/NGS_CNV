@@ -293,7 +293,7 @@ def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
                         num_of_shared_fps += shared_sample_fps
                         outfile.write("* [" + samplename + "]: " + "{" +str(shared_sample_fps)+ "}\t" + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
                     outfile.write(f"{tool1_label} and {tool2_label} both identified {num_of_shared_fps} False Positive calls\n")
-                    putfile.write("\n\n")
+                    outfile.write("\n\n")
 
                 if comparepoint == "Unique fps":
                     outfile.write(f"[-Unique False Positive calls found by {tool1_label}-]\n")
@@ -314,3 +314,5 @@ def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
         file_written = True
     except IOError:
         print("Could not write false positive comparison data to output file")
+    finally:
+        return file_written

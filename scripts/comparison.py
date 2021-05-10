@@ -63,7 +63,8 @@ def main():
         if compare_parameters["tool"] == "false_positives":
             comparisondata = comcom.compare_fps(tool1_label, tool1data, tool2_label, tool2data)
             outfilepath = compare_parameters["outdir"] + "/" + compare_parameters["output-prefix"] + ".txt"
-            write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label)
+            wrote_file = ufw.write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label)
+            print(f"...Wrote comparison output file?: {wrote_file}...")
     else:
         print("Please set the following parameters: " + ", ".join(incorrect_parameters))
 
