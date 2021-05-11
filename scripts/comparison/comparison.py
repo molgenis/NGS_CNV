@@ -270,8 +270,10 @@ def compare_fps(tool1_label, tool1_data, tool2_label, tool2_data):
     fp_data["Total fps"] = get_total_fps(tool1_fps, tool2_fps)
     print("[COMPARISON]: Determine the number of shared False Positive calls per tool")
     fp_data["Shared fps"] = get_shared_fps(tool1_fps, tool2_fps)
+    print("[COMPARISON]: Determne the number of overlapping False Positive calls")
+    fp_data["Overlapping fps"] = get_overlapping_fps(tool1_fps, tool2_fps, fp_data["Shared fps"])
     print("[COMPARISON]: Determine the number of unique False Positive calls per tool")
-    fp_data["Unique fps"] = get_unique_fps(tool1_fps, tool2_fps)
+    fp_data["Unique fps"] = get_unique_fps2(tool1_fps, tool2_fps, fp_data["Overlapping fps"])
     return fp_data
 
 
@@ -312,16 +314,98 @@ def get_total_fps(tool1fps, tool2fps):
 def get_shared_fps(tool1data, tool2data):
     shared_fps = {}
     for samplename in set(tool1data.keys()) & set(tool2data.keys()):
-        shared_fps[samplename] = set(tool1data[samplename]) & set(tool2data[samplename])
+        fps_shared = set(tool1data[samplename]) & set(tool2data[samplename])
+        if len(fps_shared) > 0:
+            shared_fps[samplename] = fps_shared
     return shared_fps
 
 
-def get_unique_fps(tool1data, tool2data):
+def get_overlapping_fps(tool1fps, tool2fps, shared_fps):
+    overlapping_fps = {}
+    for samplename in set(tool1fps.keys()) & set(tool2fps.keys()):
+        for fpregion in tool1fps[samplename]:
+            if samplename not in shared_fps:
+                overlapfps = fp_regions_overlap(fpregion, tool2fps[samplename])
+                if len(overlapfps) > 0:
+                    if samplename not in overlapping_fps:
+                        overlapping_fps[samplename] = []
+                    overlapping_fps[samplename].extend(overlapfps)
+            else:
+                if fpregion not in shared_fps[samplename]:
+                    overlapfps = fp_regions_overlap(fpregion, tool2fps[samplename])
+                    if len(overlapfps) > 0:
+                        if samplename not in overlapping_fps:
+                            overlapping_fps[samplename] = []
+                        overlapping_fps[samplename].extend(overlapfps)
+    return overlapping_fps
+
+
+def fp_regions_overlap(fp1region, fp2regions):
+    overlapping_fps = []
+    fp1_c = fp1region.split(":")[0]
+    fp1_s = int(fp1region.split(":")[1].split("-")[0])
+    fp1_e = int(fp1region.split(":")[1].split("-")[1])
+
+    for fp2region in fp2regions:
+        fp2_c = fp2region.split(":")[0]
+        if fp1_c == fp2_c:
+            fp2_s = int(fp2region.split(":")[1].split("-")[0])
+            fp2_e = int(fp2region.split(":")[1].split("-")[1])
+            if fp1_s <= fp2_e and fp2_s <= fp1_e:
+                overlapping_fps.append((fp1region, fp2region))
+    return overlapping_fps
+
+
+def get_unique_fps(tool1data, tool2data, overlapping_fps):
     unique_fps = {}
     unique_fps["tool1"] = {}
     unique_fps["tool2"] = {}
 
     for samplename in set(tool1data.keys()) & set(tool2data.keys()):
-        unique_fps["tool1"][samplename] = set(tool1data[samplename]) - set(tool2data[samplename])
-        unique_fps["tool2"][samplename] = set(tool2data[samplename]) - set(tool1data[samplename])
+        overlap_filter = []
+        if samplename in overlapping_fps:
+            overlap_filter = [x[0] for x in overlapping_fps[samplename]]
+            tool2_overlap = [x[1] for x in overlapping_fps[samplename]]
+            overlap_filter.extend(tool2_overlap)
+
+        tool1_unique_fps = set(tool1data[samplename]) - set(tool2data[samplename])
+        tool2_unique_fps = set(tool2data[samplename]) - set(tool1data[samplename])
+        tool1_unique_fps = tool1_unique_fps - set(overlap_filter)
+        tool2_unique_fps = tool2_unique_fps - set(overlap_filter)
+
+        if len(tool1_unique_fps) > 0:
+            unique_fps["tool1"][samplename] = tool1_unique_fps
+        if len(tool2_unique_fps) > 0:
+            unique_fps["tool2"][samplename] = tool2_unique_fps
+    return unique_fps
+
+
+def get_unique_fps2(tool1data, tool2data, overlapping_fps):
+    unique_fps = {}
+    unique_fps["tool1"] = {}
+    unique_fps["tool2"] = {}
+
+    for samplename in set(tool1data.keys()) | set(tool2data.keys()):
+        overlap_filter = []
+        if samplename in overlapping_fps:
+            overlap_filter = [x[0] for x in overlapping_fps[samplename]]
+            tool2_overlap = [x[1] for x in overlapping_fps[samplename]]
+            overlap_filter.extend(tool2_overlap)
+
+        tool1fps = []
+        tool2fps = []
+        if samplename in tool1data:
+            tool1fps = tool1data[samplename]
+        if samplename in tool2data:
+            tool2fps = tool2data[samplename]
+
+        tool1_unique_fps = set(tool1fps) - set(tool2fps)
+        tool2_unique_fps = set(tool2fps) - set(tool1fps)
+        tool1_unique_fps = tool1_unique_fps - set(overlap_filter)
+        tool2_unique_fps = tool2_unique_fps - set(overlap_filter)
+
+        if len(tool1_unique_fps) > 0:
+            unique_fps["tool1"][samplename] = tool1_unique_fps
+        if len(tool2_unique_fps) > 0:
+            unique_fps["tool2"][samplename] = tool2_unique_fps
     return unique_fps

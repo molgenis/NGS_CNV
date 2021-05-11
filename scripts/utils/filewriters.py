@@ -273,7 +273,7 @@ def write_comparison_data(outfilepath, comparisondata, tool1_label, tool2_label)
 def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
     try:
         file_written = False
-        comparison_points = ["Total fps", "Shared fps", "Unique fps"]
+        comparison_points = ["Total fps", "Shared fps", "Overlapping fps", "Unique fps"]
 
         with open(outfilepath, 'w') as outfile:
             outfile.write(f"Results for comparison between {tool1_label} and {tool2_label}\n\n")
@@ -291,8 +291,21 @@ def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
                     for samplename in comparisondata[comparepoint]:
                         shared_sample_fps = len(comparisondata[comparepoint][samplename])
                         num_of_shared_fps += shared_sample_fps
-                        outfile.write("* [" + samplename + "]: " + "{" +str(shared_sample_fps)+ "}\t" + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
+                        outfile.write("* [" + samplename + "]: {" +str(shared_sample_fps)+ "}\t" + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
                     outfile.write(f"{tool1_label} and {tool2_label} both identified {num_of_shared_fps} False Positive calls\n")
+                    outfile.write("\n\n")
+
+                if comparepoint == "Overlapping fps":
+                    num_of_overlaps = 0
+                    outfile.write("[-Overlapping False Positive calls-]\n")
+                    for samplename in comparisondata[comparepoint]:
+                        sample_overlaps = len(comparisondata[comparepoint][samplename])
+                        num_of_overlaps += sample_overlaps
+                        outfile.write("* [" +samplename+ "]: {" +str(sample_overlaps)+ "}\t")
+                        for overlappingfps in comparisondata[comparepoint][samplename]:
+                            outfile.write("(" +overlappingfps[0]+ " - " +overlappingfps[1]+ "), ")
+                        outfile.write("\n")
+                    outfile.write(f"{tool1_label} and {tool2_label} have {num_of_overlaps} overlapping False Positive calls\n")
                     outfile.write("\n\n")
 
                 if comparepoint == "Unique fps":
