@@ -18,9 +18,10 @@ import utils.filewriters as ufw
 
 
 #Make some parameter defining variables
-TOOL_CHOICES = ["arraycnvs", "false_positives"]
+TOOL_CHOICES = ["arraycnvs", "false_positives", "true_positives"]
 REQUIRED_PARAMS = {"arraycnvs": ["arraycnvs", "file1", "file2", "label1", "label2", "outdir", "output-prefix"],
-                   "false_positives": ["file1", "file2", "label1", "label2", "outdir", "output-prefix"]}
+                   "false_positives": ["file1", "file2", "label1", "label2", "outdir", "output-prefix"],
+                   "true_positives": ["file1", "file2", "label1", "label2", "outdir", "output-prefix"]}
 OPTIONAL_PARAMS = {}
 PARAM_TYPES = {"arraycnvs": "inputfile",
                "file1": "inputfile",
@@ -64,6 +65,13 @@ def main():
             comparisondata = comcom.compare_fps(tool1_label, tool1data, tool2_label, tool2data)
             outfilepath = compare_parameters["outdir"] + "/" + compare_parameters["output-prefix"] + ".txt"
             wrote_file = ufw.write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label)
+            print(f"...Wrote comparison output file?: {wrote_file}...")
+
+        # Perform comparison between two tools for True Positives
+        if compare_parameters["tool"] == "true_positives":
+            comparisondata = comcom.compare_tps(tool1_label, tool1data, tool2_label, tool2data)
+            outfilepath = compare_parameters["outdir"] + "/" + compare_parameters["output-prefix"] + ".txt"
+            wrote_file = ufw.write_tp_comparison(outfilepath, comparisondata, tool1_label, tool2_label)
             print(f"...Wrote comparison output file?: {wrote_file}...")
     else:
         print("Please set the following parameters: " + ", ".join(incorrect_parameters))

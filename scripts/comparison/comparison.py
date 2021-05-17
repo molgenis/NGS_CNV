@@ -361,7 +361,7 @@ def get_unique_fps(tool1data, tool2data, overlapping_fps):
     unique_fps["tool1"] = {}
     unique_fps["tool2"] = {}
 
-    for samplename in set(tool1data.keys()) & set(tool2data.keys()):
+    for samplename in set(tool1data.keys()) | set(tool2data.keys()):
         overlap_filter = []
         if samplename in overlapping_fps:
             overlap_filter = [x[0] for x in overlapping_fps[samplename]]
@@ -409,3 +409,57 @@ def get_unique_fps2(tool1data, tool2data, overlapping_fps):
         if len(tool2_unique_fps) > 0:
             unique_fps["tool2"][samplename] = tool2_unique_fps
     return unique_fps
+
+
+def compare_tps(tool1_label, tool1_data, tool2_label, tool2_data):
+    """Compare True Positives between classification data of tool1 and tool2.
+
+    Parameters
+    ----------
+    tool1_label : str
+        Name for the first tool
+    tool1_data : dict
+        Classified CNV calls for the first tool
+    tool2_label : str
+        Name for the second tool
+    tool2_data : dict
+        Classified CNV calls for the second tool
+    """
+    tp_data = {}
+
+    print("[COMPARISON]: Gather False Positive calls for both tools")
+    tool1_tps = get_tp_regions(tool1_data)
+    tool2_tps = get_tp_regions(tool2_data)
+
+    print("[COMPARISON]: Determine total number of False Positive calls per tool")
+    tp_data["Total tps"] = get_total_fps(tool1_tps, tool2_tps)
+    print("[COMPARISON]: Determine the number of shared False Positive calls per tool")
+    tp_data["Shared tps"] = get_shared_fps(tool1_tps, tool2_tps)
+    print("[COMPARISON]: Determne the number of overlapping False Positive calls")
+    tp_data["Overlapping tps"] = get_overlapping_fps(tool1_tps, tool2_tps, tp_data["Shared tps"])
+    print("[COMPARISON]: Determine the number of unique False Positive calls per tool")
+    tp_data["Unique tps"] = get_unique_fps2(tool1_tps, tool2_tps, tp_data["Overlapping tps"])
+    return tp_data
+
+
+def get_tp_regions(tooldata):
+    """Get and return False Positive calls for the selected tool.
+
+    Parameters
+    ----------
+    tooldata : dict
+        Tool classification data
+
+    Returns
+    -------
+    tool_fps : list of str
+        False Positives for the tool
+    """
+    tool_tps = {}
+    for samplename in tooldata:
+        for cnvcall in tooldata[samplename]:
+            if cnvcall.classification == "POSITIVE" or cnvcall.classification == "TRUE POSITIVE":
+                if samplename not in tool_tps:
+                    tool_tps[samplename] = []
+                tool_tps[samplename].append(cnvcall.get_region_str())
+    return tool_tps

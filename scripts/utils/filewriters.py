@@ -329,3 +329,64 @@ def write_fp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
         print("Could not write false positive comparison data to output file")
     finally:
         return file_written
+
+
+def write_tp_comparison(outfilepath, comparisondata, tool1_label, tool2_label):
+    try:
+        file_written = False
+        comparison_points = ["Total tps", "Shared tps", "Overlapping tps", "Unique tps"]
+
+        with open(outfilepath, 'w') as outfile:
+            outfile.write(f"Results for comparison between {tool1_label} and {tool2_label}\n\n")
+
+            for comparepoint in comparison_points:
+                if comparepoint == "Total tps":
+                    outfile.write("[-Total True Positive calls-]\n")
+                    outfile.write(f"{tool1_label}: {comparisondata[comparepoint][0]}\n")
+                    outfile.write(f"{tool2_label}: {comparisondata[comparepoint][1]}\n")
+                    outfile.write("\n\n")
+
+                if comparepoint == "Shared tps":
+                    num_of_shared_fps = 0
+                    outfile.write("[-Shared True Positive calls-]\n")
+                    for samplename in comparisondata[comparepoint]:
+                        shared_sample_fps = len(comparisondata[comparepoint][samplename])
+                        num_of_shared_fps += shared_sample_fps
+                        outfile.write("* [" + samplename + "]: {" +str(shared_sample_fps)+ "}\t" + ", ".join(comparisondata[comparepoint][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} and {tool2_label} both identified {num_of_shared_fps} True Positive calls\n")
+                    outfile.write("\n\n")
+
+                if comparepoint == "Overlapping tps":
+                    num_of_overlaps = 0
+                    outfile.write("[-Overlapping True Positive calls-]\n")
+                    for samplename in comparisondata[comparepoint]:
+                        sample_overlaps = len(comparisondata[comparepoint][samplename])
+                        num_of_overlaps += sample_overlaps
+                        outfile.write("* [" +samplename+ "]: {" +str(sample_overlaps)+ "}\t")
+                        for overlappingfps in comparisondata[comparepoint][samplename]:
+                            outfile.write("(" +overlappingfps[0]+ " - " +overlappingfps[1]+ "), ")
+                        outfile.write("\n")
+                    outfile.write(f"{tool1_label} and {tool2_label} have {num_of_overlaps} overlapping True Positive calls\n")
+                    outfile.write("\n\n")
+
+                if comparepoint == "Unique tps":
+                    outfile.write(f"[-Unique True Positive calls found by {tool1_label}-]\n")
+                    num_of_tool1_fps = 0
+                    for samplename in comparisondata[comparepoint]["tool1"]:
+                        tool1_sample_ufps = len(comparisondata[comparepoint]["tool1"][samplename])
+                        num_of_tool1_fps += tool1_sample_ufps
+                        outfile.write("* [" +samplename+ "]: {" +str(tool1_sample_ufps)+ "}\t" + ", ".join(comparisondata[comparepoint]["tool1"][samplename]) + "\n")
+                    outfile.write(f"{tool1_label} found {num_of_tool1_fps} unique True Positive calls\n\n")
+
+                    outfile.write(f"[-Unique True Positive calls found by {tool2_label}-]\n")
+                    num_of_tool2_fps = 0
+                    for samplename in comparisondata[comparepoint]["tool2"]:
+                        tool2_sample_ufps = len(comparisondata[comparepoint]["tool2"][samplename])
+                        num_of_tool2_fps += tool2_sample_ufps
+                        outfile.write("* [" +samplename+ "]: {" +str(tool2_sample_ufps)+ "}\t" + ", ".join(comparisondata[comparepoint]["tool2"][samplename]) + "\n")
+                    outfile.write(f"{tool2_label} found {num_of_tool2_fps} unique True Positive calls\n\n")
+        file_written = True
+    except IOError:
+        print("Could not write false positive comparison data to output file")
+    finally:
+        return file_written
