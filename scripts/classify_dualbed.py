@@ -85,7 +85,7 @@ def get_overlapping_calls(normaldata, highconfidentdata, sharedcalls, percoverla
                     overlapping_calls[samplename].extend(overlapregions)
             else:
                 if cnvcall not in sharedcalls[samplename]:
-                    overlapregions = regions_overlap(cnvcall, highconfidentdata[samplename])
+                    overlapregions = regions_overlap(cnvcall, highconfidentdata[samplename], percoverlap)
                     if len(overlapregions) > 0:
                         if samplename not in overlapping_calls:
                             overlapping_calls[samplename] = []

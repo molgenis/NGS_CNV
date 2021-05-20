@@ -103,7 +103,7 @@ def run_classification(totalsparams):
     print("...Reading classified CNV calls...")
     gatkresults = ufr.read_classification_file(totalsparams["infile"])
     print("...Generating classification label totals...")
-    totalsdata = gtcf.generate_classification_totals(gatkresults)
+    totalsdata = gtcf.generate_classification_totals(gatkresults, totalsparams["tp-per-acnv"])
     filewritten = ufw.write_classification_totals(totalsdata, totalsparams["outfile"])
     print(f"...Wrote outfile?: {filewritten}...")
 

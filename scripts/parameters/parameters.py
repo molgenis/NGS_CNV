@@ -110,6 +110,7 @@ def get_totals_parameters(tool_choices):
     totals_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to write output to (file or dir)")
     totals_args.add_argument("-op", "--outprefix", dest="outprefix", type=str, help="Prefix to use for output file names")
     totals_args.add_argument("-po", "--percent-overlap", dest="percentoverlap", type=int, help="Minimum required percentage overlap")
+    totals_args.add_argument("--tp-per-acnv", dest="tp-per-acnv", action="store_true", help="Count TPs only per array CNV")
     return vars(totals_args.parse_args())
 
 
