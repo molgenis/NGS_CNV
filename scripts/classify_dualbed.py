@@ -15,7 +15,7 @@ def get_params():
     dualbed_args.add_argument("-2", "--infile2", dest="infile2", required=True, help="Path to classified CNV calls for the High Confident BED file")
     dualbed_args.add_argument("-o", "--outdir", dest="outdir", required=True, help="Path to output directory to write output files to")
     dualbed_args.add_argument("-p", "--percent-overlap", type=int, dest="percent-overlap", default=75, help="Minimal percentage overlap required to be considered an overlapping CNV call")
-    dualbed_args.add_argument("-a", "--arraycnvs", dest="arraycnvs", required=True, help="Path to gold standard file with array CNV calls")
+    # dualbed_args.add_argument("-a", "--arraycnvs", dest="arraycnvs", required=True, help="Path to gold standard file with array CNV calls")
     return vars(dualbed_args.parse_args())
 
 
@@ -280,7 +280,7 @@ def get_dualbed_label(cnvcallregion, sharedcalls, overlappingcalls, uniquecalls)
 def main():
     """Perform the work"""
     dualbed_params = get_params()
-    array_data = ufr.read_array_cnvs(dualbed_params["arraycnvs"])
+    # array_data = ufr.read_array_cnvs(dualbed_params["arraycnvs"])
     normal_data = ufr.read_classification_file(dualbed_params["infile1"])
     highconfident_data = ufr.read_classification_file(dualbed_params["infile2"])
 
