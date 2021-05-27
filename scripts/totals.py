@@ -32,7 +32,7 @@ REQUIRED_PARAMS = {"arraycnv": ["arrayfile", "infile", "outfile", "outprefix"],
                    "fpregions": ["infile", "outfile", "outprefix"],
                    "numofcalls": ["infile"],
                    "numofna": ["infile"],
-                   "dualbed-arraycnv": ["arrayfile", "infile", "outfile", "outprefix"]}
+                   "dualbed_arraycnv": ["arrayfile", "infile", "outfile", "outprefix"]}
 OPTIONAL_PARAMS = {}
 PARAM_TYPES = {"infile": "inputfile",
                "arrayfile": "inputfile",
@@ -70,8 +70,8 @@ def main():
             gttc.get_total_calls(totalsparams["infile"], True)
 
         # Gather the total number of array CNVs found and missed for dualBED
-        if totalsparams["tool"] == "dualbed-arraycnv":
-            run_dualbed_arraycnvs(totalsparams)
+        if totalsparams["tool"] == "dualbed_arraycnv":
+            run_dualbed_arraycnv(totalsparams)
     else:
         print(f"Missing the following parameters: {incorrect_parameters}")
 
@@ -111,14 +111,14 @@ def run_dualbed_arraycnv(totalsparams):
 
     # Determine the Shared, Overlapping and Unique array CNVs found
     s_found_acnvs = gtdbac.determine_dualbed_acnvs_found(totalsparams["infile"], arraydata, "Shared")
-    shared_filter = make_sou_found_filter(s_found_acnvs)
+    shared_filter = gtdbac.make_sou_found_filter(s_found_acnvs)
     o_found_acnvs = gtdbac.determine_dualbed_acnvs_found_2(totalsparams["infile"], arraydata, "Overlapping", shared_filter)
     u_found_acnvs = gtdbac.determine_dualbed_acnvs_found(totalsparams["infile"], arraydata, "Unique")
-    sou_found_summary = summarize_found_arraycnv_types(s_found_acnvs, o_found_acnvs, u_found_acnvs)
+    sou_found_summary = gtdbac.summarize_found_arraycnv_types(s_found_acnvs, o_found_acnvs, u_found_acnvs)
 
     # Determine the missed array CNVs
-    missed_acnvs = determine_dualbed_acnvs_missed(arraydata, s_found_acnvs, o_found_acnvs, u_found_acnvs)
-    missed_summary = summarize_missed_arraycnv_types(missed_acnvs)
+    missed_acnvs = gtdbac.determine_dualbed_acnvs_missed(arraydata, s_found_acnvs, o_found_acnvs, u_found_acnvs)
+    missed_summary = gtdbac.summarize_missed_arraycnv_types(missed_acnvs)
 
     # Write the found and missed array CNV data to output files
     ufw.write_missedfound_arraycnvs(s_found_acnvs, f"{outpath}_shared_found_acnvs.txt")
@@ -127,8 +127,8 @@ def run_dualbed_arraycnv(totalsparams):
     ufw.write_missedfound_arraycnvs(missed_acnvs, f"{outpath}_missed_acnvs.txt")
 
     # Write the found and missed summaries to output files
-    write_found_summary(sou_found_summary, f"{outpath}_found_acnvs_summary.txt")
-    write_missed_summary(missed_summary, f"{outpath}_missed_acnvs_summary.txt")
+    gtdbac.write_found_summary(sou_found_summary, f"{outpath}_found_acnvs_summary.txt")
+    gtdbac.write_missed_summary(missed_summary, f"{outpath}_missed_acnvs_summary.txt")
 
 
 def run_classification(totalsparams):

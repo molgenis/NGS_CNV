@@ -44,7 +44,7 @@ def determine_dualbed_acnvs_found_2(infileloc, arraycnvs, dualbedlabel, soufilte
     already_found = {}
     array_cnvs_found = {}
     try:
-        with open() as infile:
+        with open(infileloc, 'r') as infile:
             next(infile)
             for inline in infile:
                 inlinedata = inline.strip().split("\t")
@@ -124,7 +124,7 @@ def summarize_found_arraycnv_types(sharedacnvs, overlappingacnvs, uniqueacnvs):
 
             if ofacnv.get_region() not in acnvs_processed:
                 typecounts["Overlapping"][ofacnv.cnv_class] = typecounts["Overlapping"][ofacnv.cnv_class] + 1
-                acnvs_processed.append(ofacnv.get_region())
+                acnvs_processed[samplename].append(ofacnv.get_region())
 
     # Summarize Unique
     for samplename in uniqueacnvs:
@@ -135,9 +135,10 @@ def summarize_found_arraycnv_types(sharedacnvs, overlappingacnvs, uniqueacnvs):
             if samplename not in acnvs_processed:
                 acnvs_processed[samplename] = []
 
-            if ufacnv.get_region() not in acnvs_processed:
+            if ufacnv.get_region() not in acnvs_processed[samplename]:
                 typecounts["Unique"][ufacnv.cnv_class] = typecounts["Unique"][ufacnv.cnv_class] + 1
-                acnvs_processed.append(ufacnv.get_region())
+                acnvs_processed[samplename].append(ufacnv.get_region())
+    return typecounts
 
 
 def determine_dualbed_acnvs_missed(arraycnvs, sfound_data, ofound_data, ufound_data):
@@ -162,14 +163,14 @@ def determine_dualbed_acnvs_missed(arraycnvs, sfound_data, ofound_data, ufound_d
     missed_array_cnvs = {}
     for samplename in arraycnvs:
         for acnv in arraycnvs[samplename]:
-            sfound = acnv_in_soufilter(samplename, acnv.get_region(), sfound_data)
-            ofound = acnv_in_soufilter(samplename, acnv.get_region(), ofound_data)
-            ufound = acnv_in_soufilter(samplename, acnv.get_region(), ufound_data)
+            sfound = acnv_in_soufilter(samplename, arraycnvs[samplename][acnv].get_region(), sfound_data)
+            ofound = acnv_in_soufilter(samplename, arraycnvs[samplename][acnv].get_region(), ofound_data)
+            ufound = acnv_in_soufilter(samplename, arraycnvs[samplename][acnv].get_region(), ufound_data)
 
             if not sfound and not ofound and not ufound:
                 if samplename not in missed_array_cnvs:
                     missed_array_cnvs[samplename] = []
-                missed_array_cnvs[samplename].append(acnv)
+                missed_array_cnvs[samplename].append(arraycnvs[samplename][acnv])
     return missed_array_cnvs
 
 
@@ -214,19 +215,22 @@ def write_found_summary(found_summary, outfileloc):
             outfile.write("[-Shared-]\n")
             outfile.write("Cnv_Type\tCount\n")
             for scnvtype in found_summary["Shared"]:
-                outfile.write(scnvtype}+ "\t" +found_summary["Shared"][scnvtype]+ "\n")
+                typecount = found_summary["Shared"][scnvtype]
+                outfile.write(f"{scnvtype}\t{typecount}\n")
             outfile.write("\n")
 
             outfile.write("[-Overlapping-]\n")
             outfile.write("Cnv_Type\tCount\n")
             for ocnvtype in found_summary["Overlapping"]:
-                outfile.write(ocnvtype}+ "\t" +found_summary["Overlapping"][ocnvtype]+ "\n")
+                typecount = found_summary["Overlapping"][ocnvtype]
+                outfile.write(f"{ocnvtype}\t{typecount}\n")
             outfile.write("\n")
 
             outfile.write("[-Unique-]\n")
             outfile.write("Cnv_Type\tCount\n")
             for ucnvtype in found_summary["Unique"]:
-                outfile.write(ucnvtype}+ "\t" +found_summary["Unique"][ucnvtype]+ "\n")
+                typecount = found_summary["Unique"][ucnvtype]
+                outfile.write(f"{ucnvtype}\t{typecount}\n")
         file_written = True
     except IOError:
         print("")
@@ -238,7 +242,9 @@ def write_missed_summary(missed_summary, outfileloc):
     file_written = False
     try:
         with open(outfileloc, 'w') as outfile:
-            outfile.write("Cnv_Type\tCount\n"):
+            outfile.write("Cnv_Type\tCount\n")
+            for mcnvtype in missed_summary:
+                outfile.write(f"{mcnvtype}\t{missed_summary[mcnvtype]}\n")
     except IOError:
         print("")
     finally:
@@ -259,7 +265,7 @@ def make_sou_found_filter(sou_data):
         Filter to use
     """
     sou_filter = {}
-    for samplename inn sou_data:
+    for samplename in sou_data:
         if samplename not in sou_filter:
             sou_filter[samplename] = []
         for acnv in sou_data[samplename]:
