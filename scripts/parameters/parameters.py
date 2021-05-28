@@ -106,6 +106,7 @@ def get_totals_parameters(tool_choices):
     totals_args = argparse.ArgumentParser()
     totals_args.add_argument("-t", "--tool", dest="tool", type=str, choices=tool_choices, required=True, help="Type of totals to collect")
     totals_args.add_argument("-i", "--infile", dest="infile", type=str, help="Path to input file")
+    totals_args.add_argument("-2", "--infile2", dest="infile2", type=str, help="Patht op second input file")
     totals_args.add_argument("-a", "--arrayfile", dest="arrayfile", type=str, help="Path to file with array")
     totals_args.add_argument("-o", "--outfile", dest="outfile", type=str, help="Path to write output to (file or dir)")
     totals_args.add_argument("-op", "--outprefix", dest="outprefix", type=str, help="Prefix to use for output file names")

@@ -14,6 +14,7 @@ import generate_totals.classifications as gtcf
 import generate_totals.fp_regions as gtfr
 import generate_totals.total_calls as gttc
 import generate_totals.dualbed_acnvs as gtdbac
+import generate_totals.dualbed_ratios as gtdbr
 
 # Import parameter script
 import parameters.parameters as parpar
@@ -26,15 +27,17 @@ import utils.filereaders as ufr
 import utils.filewriters as ufw
 
 
-TOOL_CHOICES = ["arraycnv", "classification", "fpregions", "numofcalls", "numofna", "dualbed_arraycnv"]
+TOOL_CHOICES = ["arraycnv", "classification", "fpregions", "numofcalls", "numofna", "dualbed_arraycnv", "dualbed_classification"]
 REQUIRED_PARAMS = {"arraycnv": ["arrayfile", "infile", "outfile", "outprefix"],
                    "classification": ["infile", "outfile"],
                    "fpregions": ["infile", "outfile", "outprefix"],
                    "numofcalls": ["infile"],
                    "numofna": ["infile"],
-                   "dualbed_arraycnv": ["arrayfile", "infile", "outfile", "outprefix"]}
+                   "dualbed_arraycnv": ["arrayfile", "infile", "outfile", "outprefix"],
+                   "dualbed_classification": ["infile", "infile2", "outfile"]}
 OPTIONAL_PARAMS = {}
 PARAM_TYPES = {"infile": "inputfile",
+               "infile2": "inputfile",
                "arrayfile": "inputfile",
                "outfile": "outputfile",
                "outprefix": "string",
@@ -72,6 +75,9 @@ def main():
         # Gather the total number of array CNVs found and missed for dualBED
         if totalsparams["tool"] == "dualbed_arraycnv":
             run_dualbed_arraycnv(totalsparams)
+
+        if totalsparams["tool"] == "dualbed_classification":
+            run_dualbed_ratios(totalsparams)
     else:
         print(f"Missing the following parameters: {incorrect_parameters}")
 
@@ -145,6 +151,23 @@ def run_classification(totalsparams):
     totalsdata = gtcf.generate_classification_totals(gatkresults, totalsparams["tp-per-acnv"])
     filewritten = ufw.write_classification_totals(totalsdata, totalsparams["outfile"])
     print(f"...Wrote outfile?: {filewritten}...")
+
+
+def run_dualbed_classification(totalsparams):
+    normal_data = gtdbr.read_dualbed_data(totalsparams["infile"])
+    hc_data = gtdbr.read_dualbed_data(totalsparams["infile2"])
+
+    # Generate totals for Shared dualBED calls
+    shared_totals = gtcf.generate_classification_totals(normal_data["Shared"], totalsparams["tp-per-acnv"])
+
+    # Generate totals for Overlapping dualBED calls
+    overlapping_calls = gtdbr.merge_overlapping(normal_data["Overlapping"], hc_data["Overlapping"])
+    sharedfilter = gtdbr.form_shared_filter(normal_data["Shared"])
+    overlapping_totals = gtdbr.generate_overlapping_totals(overlapping_calls, sharedfilter, totalsparams["tp-per-acnv"])
+
+    # Generate totals for Unique dualBED calls
+    nunique_totals = gtcf.generate_classification_totals(normal_data["Unique"], totalsparams["tp-per-acnv"])
+    hcunique_totals = gtcf.generate_classification_totals(hc_data["Unique"], totalsparams["tp-per-acnv"])
 
 
 def run_fpregions(totalsparams):
