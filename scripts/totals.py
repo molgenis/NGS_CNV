@@ -154,6 +154,13 @@ def run_classification(totalsparams):
 
 
 def run_dualbed_classification(totalsparams):
+    """Gather totals for dualBED classification ratios.
+
+    Parameters
+    ----------
+    totalsparams : dict
+        Set CLI parameter values
+    """
     normal_data = gtdbr.read_dualbed_data(totalsparams["infile"])
     hc_data = gtdbr.read_dualbed_data(totalsparams["infile2"])
 
@@ -168,6 +175,9 @@ def run_dualbed_classification(totalsparams):
     # Generate totals for Unique dualBED calls
     nunique_totals = gtcf.generate_classification_totals(normal_data["Unique"], totalsparams["tp-per-acnv"])
     hcunique_totals = gtcf.generate_classification_totals(hc_data["Unique"], totalsparams["tp-per-acnv"])
+
+    # Write the results to file
+    gtdbr.write_dualbed_ratios(totalsparams["outfile"], shared_totals, overlapping_totals, nunique_totals, hcunique_totals)
 
 
 def run_fpregions(totalsparams):

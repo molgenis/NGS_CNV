@@ -133,7 +133,7 @@ def generate_overlapping_totals(overlappingcalls, sharedfilter, tpperacnv):
             if count_ocnv:
                 if classlabel not in overlapping_totals:
                     overlapping_totals[classlabel] = 0
-                
+
                 if classlabel == "True Positive" and tpperacnv:
                     if samplename not in arraycnvs_found:
                         arraycnvs_found[samplename] = []
