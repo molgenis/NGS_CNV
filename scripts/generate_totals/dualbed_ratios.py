@@ -1,3 +1,5 @@
+from classes.gatkcall import GatkCall
+
 def read_dualbed_data(infileloc):
     """Read and return dualBED classified data.
 
@@ -19,27 +21,27 @@ def read_dualbed_data(infileloc):
     try:
         with open(infileloc, 'r') as infile:
             next(infile)
-                for fileline in infile:
-                    filelinedata = fileline.strip().split("\t")
+            for fileline in infile:
+                filelinedata = fileline.strip().split("\t")
 
-                    gatkreg = get_cnv_region(filelinedata[1])
-                    gatkgenes = filelinedata[13].split(":")
-                    gatkcall = GatkCall(filelinedata[0], gatkreg[0], gatkreg[1], gatkreg[2], filelinedata[2], int(filelinedata[3]), filelinedata[4], filelinedata[9], filelinedata[10], int(filelinedata[11]), int(filelinedata[12]), gatkgenes, fileline.strip())
+                gatkreg = get_cnv_region(filelinedata[1])
+                gatkgenes = filelinedata[13].split(":")
+                gatkcall = GatkCall(filelinedata[0], gatkreg[0], gatkreg[1], gatkreg[2], filelinedata[2], int(filelinedata[3]), filelinedata[4], filelinedata[9], filelinedata[10], int(filelinedata[11]), int(filelinedata[12]), gatkgenes, fileline.strip())
 
-                    if filelinedata[-1] == "Shared":
-                        if filelinedata[0] not in dualbed_data["Shared"]:
-                            dualbed_data["Shared"][filelinedata[0]] = []
-                        dualbed_data["Shared"][filelinedata[0]].append(gatkcall)
+                if filelinedata[-1] == "Shared":
+                    if filelinedata[0] not in dualbed_data["Shared"]:
+                        dualbed_data["Shared"][filelinedata[0]] = []
+                    dualbed_data["Shared"][filelinedata[0]].append(gatkcall)
 
-                    elif filelinedata[-1] == "Overlapping":
-                        if filelinedata[0] not in dualbed_data["Overlapping"]:
-                            dualbed_data["Overlapping"][filelinedata[0]] = []
-                        dualbed_data["Overlapping"][filelinedata[0]].append(gatkcall)
+                elif filelinedata[-1] == "Overlapping":
+                    if filelinedata[0] not in dualbed_data["Overlapping"]:
+                        dualbed_data["Overlapping"][filelinedata[0]] = []
+                    dualbed_data["Overlapping"][filelinedata[0]].append(gatkcall)
 
-                    else:
-                        if filelinedata[0] not in dualbed_data["Unique"]:
-                            dualbed_data["Unique"][filelinedata[0]] = []
-                        dualbed_data["Unique"][filelinedata[0]].append(gatkcall)
+                else:
+                    if filelinedata[0] not in dualbed_data["Unique"]:
+                        dualbed_data["Unique"][filelinedata[0]] = []
+                    dualbed_data["Unique"][filelinedata[0]].append(gatkcall)
     except IOError:
         print("Could not read input file")
     finally:
@@ -95,7 +97,7 @@ def form_shared_filter(shareddata):
     shared_filter = {}
     for samplename in shareddata:
         for scnv in shareddata[samplename]:
-            if scnv.classification == "POSITIVE" or scnv.classification == "TRUE POSITIVE"
+            if scnv.classification == "POSITIVE" or scnv.classification == "TRUE POSITIVE":
                 if samplename not in shared_filter:
                     shared_filter[samplename] = []
                 shared_filter[samplename].append(scnv.arraycnv)
@@ -142,11 +144,6 @@ def generate_overlapping_totals(overlappingcalls, sharedfilter, tpperacnv):
                         arraycnvs_found[samplename].append(ocnv.arraycnv)
                 else:
                     overlapping_totals[classlabel] += 1
-
-            # Check if the True Positives should be counted per array CNV
-            if tpperacnv:
-                numoftps = determine_tps_as_arraycnvs(classificationdata)
-                classificationtotals["True Positive"] = numoftps
     return overlapping_totals
 
 
@@ -206,27 +203,51 @@ def write_dualbed_ratios(outfileloc, sharedratios, overlappingratios, nuniquerat
         with open(outfileloc, 'w') as outfile:
             outfile.write("[-Shared-]\n")
             for ratiolabel in ratiolabels:
-                outfile.write(f"{ratiolabel}: {sharedratios[ratiolabel]}\n")
-            print("\n")
+                if ratiolabel in sharedratios:
+                    outfile.write(f"{ratiolabel}: {sharedratios[ratiolabel]}\n")
+            outfile.write("\n")
 
             # Write the Overlapping ratios to file
             outfile.write("[-Overlapping-]\n")
             for ratiolabel in ratiolabels:
-                outfile.write(f"{ratiolabel}: {overlappingratio[ratiolabel]}\n")
-            print("\n")
+                if ratiolabel in overlappingratios:
+                    outfile.write(f"{ratiolabel}: {overlappingratios[ratiolabel]}\n")
+            outfile.write("\n")
 
             # Write the normal Unique ratios to file
             outfile.write("[-Unique Normal-]\n")
             for ratiolabel in ratiolabels:
-                outfile.write(f"{ratiolabel}: {nuniqueratios[ratiolabel]}\n")
-            print("\n")
+                if ratiolabel in nuniqueratios:
+                    outfile.write(f"{ratiolabel}: {nuniqueratios[ratiolabel]}\n")
+            outfile.write("\n")
 
             # Write the high confident Unique ratios to file
             outfile.write("[-Unique HighConfident-]\n")
             for ratiolabel in ratiolabels:
-                outfile.write(f"{ratiolabel}: {hcuniqueratios[ratiolabel]}\n")
+                if ratiolabel in hcuniqueratios:
+                    outfile.write(f"{ratiolabel}: {hcuniqueratios[ratiolabel]}\n")
         file_written = True
     except IOError:
         print("Could not write ratio data to file")
     finally:
         return file_written
+
+
+def get_cnv_region(arraycnvregion):
+    """Split and return the array CNV region into the chrom, start and stop.
+
+    Parameters
+    ----------
+    arraycnvregion : str
+        Array CNV region data
+
+    Returns
+    -------
+    list of str and int
+        Array CNV region data
+    """
+    arrayregion = arraycnvregion.replace(",", "")
+    arrayregiondata = arrayregion.split(":")
+    arraystart = arrayregiondata[1].split("-")[0]
+    arrayend = arrayregiondata[1].split("-")[1]
+    return [arrayregiondata[0], arraystart, arrayend]

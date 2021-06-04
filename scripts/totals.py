@@ -77,7 +77,7 @@ def main():
             run_dualbed_arraycnv(totalsparams)
 
         if totalsparams["tool"] == "dualbed_classification":
-            run_dualbed_ratios(totalsparams)
+            run_dualbed_classification_ratios(totalsparams)
     else:
         print(f"Missing the following parameters: {incorrect_parameters}")
 
@@ -153,7 +153,7 @@ def run_classification(totalsparams):
     print(f"...Wrote outfile?: {filewritten}...")
 
 
-def run_dualbed_classification(totalsparams):
+def run_dualbed_classification_ratios(totalsparams):
     """Gather totals for dualBED classification ratios.
 
     Parameters

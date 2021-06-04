@@ -65,6 +65,26 @@ def get_comparison_parameters(tool_choices):
     return vars(compare_args.parse_args())
 
 
+def get_dualbed_parameters(tool_choices):
+    """Define and return set CLI parameters for the dualbed script.
+
+    Parameters
+    ----------
+    tool_choices : list of str
+        List of actions for dualBED that can be chosen
+    """
+    dualbed_args = argparse.ArgumentParser()
+    dualbed_args.add_argument("-t", "--tool", type=str, dest="tool", choices=tool_choices, help="Type of action to perform")
+    dualbed_args.add_argument("-1", "--infile1", type=str, dest="infile1", help="Path to first input file")
+    dualbed_args.add_argument("-2", "--infile2", type=str, dest="infile2", help="Path to second input file")
+    dualbed_args.add_argument("-o", "--outfile", type=str, dest="outfile", help="Path to write output file to")
+    dualbed_args.add_argument("-od", "--outdir", tpe=str, dest="outdir", help="Path to output directory to write output files to")
+    dualbed_args.add_argument("-op", "--output-prefix", type=str, dest="output-prefix", help="Output prefix to use")
+    dualbed_args.add_argument("-po", "--percent-overlap", type=int, dest="percent-overlap", default=75, help="Minimal required percentage overlap")
+    dualbed_args.add_argument("-nu", "--no-unique", dest="no-unique", action="store_true", help="Exclude calls labelled Unique")
+    return vars(dualbed_args.parse_args())
+
+
 def get_filtering_parameters(tool_choices):
     """Define and return set CLI parameters for the filtering script.
 
