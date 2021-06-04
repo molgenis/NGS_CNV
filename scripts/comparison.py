@@ -52,8 +52,10 @@ def main():
 
         # Perform comparison between two tools for found array CNVs
         if compare_parameters["tool"] == "arraycnvs":
+            print("...Reading array CNV data...")
+            arraydata = ufr.read_array_cnvs(compare_parameters["arraycnvs"])
             print(f"...Perform the comparison between {tool1_label} and {tool2_label}...")
-            comparisondata = comcom.perform_comparison(tool1_label, tool1data, tool2_label, tool2data, arraydata)
+            comparisondata = comcom.perform_comparison(tool1_label, tool1data, tool2_label, tool2data, arraydata, compare_parameters["tp-per-acnv"])
 
             outfilepath = compare_parameters["outdir"] + "/" + compare_parameters["output-prefix"] + ".txt"
             print(f"...Writing comparison data to output file {outfilepath}...")

@@ -62,6 +62,7 @@ def get_comparison_parameters(tool_choices):
     compare_args.add_argument("-2", "--file2", type=str, dest="file2", help="Path to second CNV calling classification file")
     compare_args.add_argument("-l1", "--label1", type=str, dest="label1", help="Label to use for the first tool")
     compare_args.add_argument("-l2", "--label2", type=str, dest="label2", help="Label to use for the second tool")
+    compare_args.add_argument("--tp-per-acnv", dest="tp-per-acnv", action="store_true", help="Count TPs only per array CNV")
     return vars(compare_args.parse_args())
 
 
@@ -78,7 +79,7 @@ def get_dualbed_parameters(tool_choices):
     dualbed_args.add_argument("-1", "--infile1", type=str, dest="infile1", help="Path to first input file")
     dualbed_args.add_argument("-2", "--infile2", type=str, dest="infile2", help="Path to second input file")
     dualbed_args.add_argument("-o", "--outfile", type=str, dest="outfile", help="Path to write output file to")
-    dualbed_args.add_argument("-od", "--outdir", tpe=str, dest="outdir", help="Path to output directory to write output files to")
+    dualbed_args.add_argument("-od", "--outdir", type=str, dest="outdir", help="Path to output directory to write output files to")
     dualbed_args.add_argument("-op", "--output-prefix", type=str, dest="output-prefix", help="Output prefix to use")
     dualbed_args.add_argument("-po", "--percent-overlap", type=int, dest="percent-overlap", default=75, help="Minimal required percentage overlap")
     dualbed_args.add_argument("-nu", "--no-unique", dest="no-unique", action="store_true", help="Exclude calls labelled Unique")

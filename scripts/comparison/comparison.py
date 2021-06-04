@@ -3,7 +3,7 @@ import generate_totals.classifications as gtc
 import generate_totals.array_cnvs as gtac
 
 
-def perform_comparison(tool1_label, tool1_data, tool2_label, tool2_data, arraydata):
+def perform_comparison(tool1_label, tool1_data, tool2_label, tool2_data, arraydata, tpperacnv):
     """Compare classified CNV calls from two tools.
 
     Parameters
@@ -29,7 +29,7 @@ def perform_comparison(tool1_label, tool1_data, tool2_label, tool2_data, arrayda
     comparison_data["Total calls"] = total_calls
 
     print("COMPARISON: [Compare total calls per classifcation label]")
-    call_types = compare_call_types(tool1_data, tool2_data)
+    call_types = compare_call_types(tool1_data, tool2_data, tpperacnv)
     comparison_data["Call types"] = call_types
 
     print("COMPARISON: [Determine the number of found array CNVs]")
@@ -96,7 +96,7 @@ def determine_total_calls(tooldata):
     return tool_callnum
 
 
-def compare_call_types(tool1_data, tool2_data):
+def compare_call_types(tool1_data, tool2_data, tpperacnv):
     """Compares the number of TP, FP, ANI, WNI, AWNI calls between the two tools.
 
     Parameters
@@ -112,8 +112,8 @@ def compare_call_types(tool1_data, tool2_data):
         Number of calls for TP, FP, ANI, WNI, AWNI
     """
     classification_labels = ["True Positive", "False Positive", "Array Non-Informative", "WES Non-Informative", "Array & WES Non-Informative"]
-    tool1_classification_numbers = gtc.generate_classification_totals(tool1_data)
-    tool2_classification_numbers = gtc.generate_classification_totals(tool2_data)
+    tool1_classification_numbers = gtc.generate_classification_totals(tool1_data, tpperacnv)
+    tool2_classification_numbers = gtc.generate_classification_totals(tool2_data, tpperacnv)
 
     classification_numbers = {}
     for classlabel in classification_labels:

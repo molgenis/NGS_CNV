@@ -20,7 +20,7 @@ PARAM_TYPES = {"infile1": "inputfile",
 
 
 def main():
-    cbd_params = parpar.get_dualbed_parameters()
+    cbd_params = parpar.get_dualbed_parameters(TOOL_CHOICES)
     incorrect_parameters = parpar.parameters_are_ok(cbd_params, REQUIRED_PARAMS, PARAM_TYPES)
 
     if len(incorrect_parameters) == 0:
@@ -65,19 +65,26 @@ def combine_dualbed_files(dbfile1, dbfile2, outfileloc, nounique):
         outfile = open(outfileloc, 'w')
 
         # Write first input file entries to the output file
+        print("...Adding first dua;BED file...")
         with open(dbfile1, 'r') as infile1:
-            next(infile1)
             for fileline in infile1:
+                add_line = True
                 filelinedata = fileline.strip().split("\t")
-                if filelinedata[-1] == "Unique" and not nounique:
+                if filelinedata[-1] == "Unique" and nounique:
+                    add_line = False
+                if add_line:
                     outfile.write(fileline)
 
         # Write second input file entries to the output file
+        print("...Adding second dualBED file...")
         with open(dbfile2, 'r') as infile2:
             next(infile2)
             for fileline in infile2:
+                add_line = True
                 filelinedata = fileline.strip().split("\t")
-                if filelinedata[-1] == "Unique" and not nounique:
+                if filelinedata[-1] == "Unique" and nounique:
+                    add_line = False
+                if add_line:
                     outfile.write(fileline)
 
         outfile.close()
