@@ -1,7 +1,7 @@
 \scripts
-	[make_hcbedfile_part1.sh]: 
-	[make_hcbedfile_part2.sh]: 
-	[make_hc_scripts.py]: 
+	[make_hcbedfile_part1.sh]
+	[make_hcbedfile_part2.sh]
+	[make_hc_scripts.py]
 
 
 \make_hcbedfile_part1.sh
@@ -13,9 +13,11 @@
 \make_hc_scripts.py
 	This script will produce modified versions of `make_hcbedfile_part1.sh` and `make_hcbedfile_part2.sh` supplying certain variables with user provided data (such as directory and file paths).
 	The following variables will be replaced:
-	* $hcdir
-	* $bedfile
-	* $slicedbedfile
+	* $hcdir : Path to directory to use for creating the High Confident BED file.
+	* $bedfile : Path to BED file to use as a starting point for creating the High Confident BED file.
+	* $slicedbedfile : Path to the sliced BED file (output from `slice_bed_file.py`) that will be further used to make the High Confident BED file.
+	* $umcuscriptsdir : Path to the directory containing the UMCU scripts to create the High Confident BED file.
+	* $umcuvenvdir : Path to the directory containing the UMNCU Python Virtual Environment (this environment contains several required packages).
 
 ========================================================================================================================================================================================================
 

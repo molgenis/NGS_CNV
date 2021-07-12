@@ -45,6 +45,10 @@ def check_parameter_values(parameter_values):
     if not os.path.isfile(parameter_values["bed-file"]):
         incorrect_parameters.append("-b / --bed-file")
 
+    # Check that the samples list file exists.
+    if not os.path.isfile(parameter_values["samples-to-use"]):
+        incorrect_parameters.append("-s / --samples-to-use")
+
     # Check that the directory with UMCU scripts exists.
     if not os.path.isdir(parameter_values["umcu-scripts-dir"]):
         incorrect_parameters.append("-u / --umcu-scripts-dir")
@@ -228,11 +232,37 @@ def write_script(output_file_location, script_to_write):
 
 
 def get_sliced_bed_file(projectdir, bedfile):
+    """Make the file name and path for the sliced BED file.
+
+    Parameters
+    ----------
+    projectdir : str
+        Path to directory to use for creating the High Confident BED file
+    bedfile : str
+        Path to BED file to use
+
+    Returns
+    -------
+    str
+        Path to the sliced BED file
+    """
     bedfilename = bedfile.split("/")[-1]
-    return f"{projectdir}"
+    return f"{projectdir}sliced_{bedfilename}"
 
 
 def add_dir_slash(directory_location):
+    """Adds a trailing / to a directory path.
+
+    Parameters
+    ----------
+    directory_location : str
+        Path to directory
+
+    Returns
+    -------
+    directory_location : str
+        Path to directory with trailing /
+    """
     if not directory_location.endswith("/"):
         directory_location = f"{directory_location}/"
     return directory_location
