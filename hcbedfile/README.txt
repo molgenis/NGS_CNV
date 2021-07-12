@@ -1,14 +1,13 @@
 \scripts
+	[generate_sambamba.py]
+	[make_hc_scripts.py]
 	[make_hcbedfile_part1.sh]
 	[make_hcbedfile_part2.sh]
-	[make_hc_scripts.py]
+	[make_population_sample_list.py]
 
 
-\make_hcbedfile_part1.sh
-	Template for the first part of creating the High Confident BED file. The first part makes the sliced BED file, the two populations and generates the sambamba jobs.
-
-\make_hcbedfile_part2.sh
-	Template fo rthe second part of creating the High Confident BED file. The second part calculates the statistics, merges the populations and eventually creates the High Confident BED file.
+\generate_sambamba.py
+	Script that generates sambamba jobs for a set of BAM files.
 
 \make_hc_scripts.py
 	This script will produce modified versions of `make_hcbedfile_part1.sh` and `make_hcbedfile_part2.sh` supplying certain variables with user provided data (such as directory and file paths).
@@ -18,6 +17,15 @@
 	* $slicedbedfile : Path to the sliced BED file (output from `slice_bed_file.py`) that will be further used to make the High Confident BED file.
 	* $umcuscriptsdir : Path to the directory containing the UMCU scripts to create the High Confident BED file.
 	* $umcuvenvdir : Path to the directory containing the UMNCU Python Virtual Environment (this environment contains several required packages).
+
+\make_hcbedfile_part1.sh
+	Template for the first part of creating the High Confident BED file. The first part makes the sliced BED file, the two populations and generates the sambamba jobs.
+
+\make_hcbedfile_part2.sh
+	Template for the second part of creating the High Confident BED file. The second part calculates the statistics, merges the populations and eventually creates the High Confident BED file.
+
+\make_population_sample_list.py
+	Script to create a BAM list file for the F1, F2, M1 or M2 population
 
 ========================================================================================================================================================================================================
 
