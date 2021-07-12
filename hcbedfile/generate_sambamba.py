@@ -4,10 +4,14 @@ import os
 indirfiles = os.listdir(sys.argv[1])
 bamfiles = [f"{sys.argv[1]}/{bamfile}" for bamfile in indirfiles if bamfile.endswith(".bam")]
 jobnum=0
+sbatch_files = []
 
+# Create the job files
 for bamfile in bamfiles:
     jobnum += 1
-    outfilepath = f"{sys.argv[2]}/sambamba_{jobnum}.sh"
+    outfilepath = f"{sys.argv[2]}/sambamba_{sys.argv[3]}_{jobnum}.sh"
+    sbatch_files.append(outfilepath)
+
     try:
         outfile = open(outfilepath, 'w')
         outfile.write("#!/bin/bash\n")
@@ -27,3 +31,12 @@ for bamfile in bamfiles:
         outfile.close()
     except IOError:
         print(f"Could not write {outfile}")
+
+# Write submitter for batch script
+submitterpath = f"{sys.argv[2]}/submit_{sys.argv[3]}.sh"
+try:
+    with open(submitterpath, 'w') as submitterfile:
+        for jobfile in sbatch_files:
+            submitterfile.write(f"sbatch {jobfile}\n")
+except IOError:
+    print(f"Could not write job submitter {submitterpath}")

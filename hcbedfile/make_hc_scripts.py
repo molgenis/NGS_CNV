@@ -142,7 +142,7 @@ def read_script_template(script_file_loc):
         print(f"Could not read script template {script_file_loc}")
 
 
-def modify_template(scripttemplate, projectdir, bedfile, slicedbedfile, umcuscripts, umcuvenv):
+def modify_template(scripttemplate, projectdir, bedfile, slicedbedfile, umcuscripts, umcuvenv, outputdir):
     """Modify the template script to insert user supplied values.
 
     Parameters
@@ -171,6 +171,7 @@ def modify_template(scripttemplate, projectdir, bedfile, slicedbedfile, umcuscri
     hc_script = hc_script.replace("\"${slicedbedfile}\"", slicedbedfile)
     hc_script = hc_script.replace("\"${umcuscripts}\"", umcuscripts)
     hc_script = hc_script.replace("\"${umcuvenvdir}\"", umcuvenv)
+    hc_script = hc_script.replace("\"${generatesambamba}\"", outputdir)
     return hc_script
 
 
@@ -231,6 +232,18 @@ def write_script(output_file_location, script_to_write):
         return file_written
 
 
+def copy_generate_sambamba(outdirloc):
+    try:
+        gsscript = ""
+        with open("generate_sambamba.py", 'r') as gsoriginal:
+            gsscript = gsoriginal.read()
+
+        with open(f"{outdirloc}generate_sambamba.py", 'w') as gscopy:
+            gscopy.write(gsscript)
+    except IOError:
+        print(f"Could not copy generate_sambamba.py to {outdirloc}")
+
+
 def get_sliced_bed_file(projectdir, bedfile):
     """Make the file name and path for the sliced BED file.
 
@@ -281,6 +294,9 @@ def main():
         output_directory = add_dir_slash(make_hc_parameters["output-directory"])
         output_prefix = make_hc_parameters["name-prefix"]
 
+        # Copy the generate_sambamba.py script to 
+        copy_generate_sambamba(output_directory)
+
         hc_population_samples = read_sample_list(make_hc_parameters["samples-to-use"])
         hc_population_samples = check_populations(hc_population_samples, make_hc_parameters["minimum-samples"])
 
@@ -293,9 +309,9 @@ def main():
             sliced_bed_file = get_sliced_bed_file(project_directory, make_hc_parameters["bed-file"])
 
             # Make the functional scripts
-            part1_script = modify_template(part1_template, project_directory, make_hc_parameters["bed-file"], sliced_bed_file, umcu_scripts_directory, umcu_venv_directory)
+            part1_script = modify_template(part1_template, project_directory, make_hc_parameters["bed-file"], sliced_bed_file, umcu_scripts_directory, umcu_venv_directory, output_directory)
             part1_script = add_population_samples(part1_script, hc_population_samples, project_directory)
-            part2_script = modify_template(part2_template, project_directory, make_hc_parameters["bed-file"], sliced_bed_file, umcu_scripts_directory, umcu_venv_directory)
+            part2_script = modify_template(part2_template, project_directory, make_hc_parameters["bed-file"], sliced_bed_file, umcu_scripts_directory, umcu_venv_directory, output_directory)
 
             script1_output_path = f"{output_directory}{output_prefix}_part1.sh"
             script2_output_path = f"{output_directory}{output_prefix}_part2.sh"

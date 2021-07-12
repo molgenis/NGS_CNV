@@ -4,6 +4,7 @@
 #$slicedbedfile: Location and name of the sliced BED file, produced by slice_bed_file.py
 #$umcuscriptsdir: Location of the UMCU Python scripts
 #$umcuvenvdir: Location of the UMCU Python Virtual Env
+#$generatesambamba: Directory containing the generate_sambamba.py script
 
 echo "[...ACTIVATING UMCU PYTHON ENVIRONMENT...]"
 source "${umcuvenvdir}"bin/activate
@@ -30,7 +31,17 @@ echo "[...PLACING FEMALE SAMPLES IN POPULATION2 DIRECTORY...]"
 #<LINK F2>
 
 echo "[...GENERATING SAMBAMBA JOBS...]"
+mkdir "${hcdir}"sambamba_jobs
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/male "${hcdir}sambamba_jobs" m1
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/female "${hcdir}sambamba_jobs" f1
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/male "${hcdir}sambamba_jobs" m2
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/female "${hcdir}sambamba_jobs" f2
 
+echo "[...SUBMIT THE SAMBAMBA JOBS...]"
+sh "${hcdir}"sambamba_jobs/submit_m1.sh
+sh "${hcdir}"sambamba_jobs/submit_f1.sh
+sh "${hcdir}"sambamba_jobs/submit_m2.sh
+sh "${hcdir}"sambamba_jobs/submit_f2.sh
 
 echo "[...DEACTIVATING UMCU PYTHON ENVIRONEMT...]"
 deactivate
