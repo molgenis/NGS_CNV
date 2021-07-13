@@ -58,7 +58,7 @@ def check_parameter_values(parameter_values):
         incorrect_parameters.append("-v / --umcu-scripts-venv")
 
     # Check that the output directory exists
-    if not os.path.isdir(parameters_values["output-directory"]):
+    if not os.path.isdir(parameter_values["output-directory"]):
         incorrect_parameters.append("-o / --output-directory")
 
     return incorrect_parameters
@@ -85,6 +85,7 @@ def read_sample_list(sample_list_file_location):
                 filelinedata = fileline.strip().split("\t")
                 if filelinedata[1] in population_labels:
                     population_samples[filelinedata[1]].append(filelinedata[0])
+        return population_samples
     except IOError:
         print(f"Could not read sample list {sample_list_file_location}")
 
@@ -169,7 +170,7 @@ def modify_template(scripttemplate, projectdir, bedfile, slicedbedfile, umcuscri
     hc_script = hc_script.replace("\"${hcdir}\"", projectdir)
     hc_script = hc_script.replace("\"${bedfile}\"", bedfile)
     hc_script = hc_script.replace("\"${slicedbedfile}\"", slicedbedfile)
-    hc_script = hc_script.replace("\"${umcuscripts}\"", umcuscripts)
+    hc_script = hc_script.replace("\"${umcuscriptsdir}\"", umcuscripts)
     hc_script = hc_script.replace("\"${umcuvenvdir}\"", umcuvenv)
     hc_script = hc_script.replace("\"${generatesambamba}\"", outputdir)
     return hc_script
@@ -333,9 +334,9 @@ if __name__ == "__main__":
 
 # USAGE:
 # python make_hc_scripts.py
-# -b 
+# -b /groups/umcg-solve-rd/tmp01/resources/BED_KITS/hsapiens.hs37d5_PRAGUE.Custom.Target.primaryTarget.merge.bed
 # -o 
-# -p 
+# -p /groups/umcg-solve-rd/tmp01/umcg-mbeukers/hc_bedfiles
 # -s 
-# -u 
-# -v 
+# -u /groups/umcg-gdio/tmp01/umcg-mbeukers/umcu_exomedepth/scripts
+# -v /groups/umcg-gdio/tmp01/umcg-mbeukers/umcu_exomedepth/scripts/exomedepth

@@ -14,8 +14,8 @@ python "${umcuscriptsdir}"filter_probe_file.py "${hcdir}"population2/male > "${h
 python "${umcuscriptsdir}"filter_probe_file.py "${hcdir}"population2/female > "${hcdir}"population2_female_output_all
 
 echo "[...CALCULTE THE NUMBER OF AUTOSOMAL+X AND Y TARGETS IN SLICED BED FILE...]"
-autoChrX=$(cat "${$slicedbedfile}" | awk ‘($1 != “Y”)’ | wc -l)
-chrY=$(cat "${$slicedbedfile}" | awk ‘($1 == “Y”)’ | wc -l)
+autoChrX=$(cat "${slicedbedfile}" | awk '($1 != "Y")' | wc -l)
+chrY=$(cat "${slicedbedfile}" | awk '($1 == "Y")' | wc -l)
 
 echo "[...CALCULATE THE NUMBER OF TARGETS TO REMAIN...]"
 autoChrXremain=$(("${autoChrX}"*95/100))

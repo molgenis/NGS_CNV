@@ -10,7 +10,7 @@ echo "[...ACTIVATING UMCU PYTHON ENVIRONMENT...]"
 source "${umcuvenvdir}"bin/activate
 
 echo "[...SLICING BED FILE INTO INTERVALS OF 300...]"
-python "${umcuscriptsdir}"slice_bed_file.py "${bedfile}" 300 > "${$slicedbedfile}"
+python "${umcuscriptsdir}"slice_bed_file.py "${bedfile}" 300 > "${slicedbedfile}"
 
 echo "[...MAKING POPULATION DIRECTORIES...]"
 mkdir "${hcdir}"population1/male
@@ -32,10 +32,10 @@ echo "[...PLACING FEMALE SAMPLES IN POPULATION2 DIRECTORY...]"
 
 echo "[...GENERATING SAMBAMBA JOBS...]"
 mkdir "${hcdir}"sambamba_jobs
-python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/male "${hcdir}sambamba_jobs" m1
-python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/female "${hcdir}sambamba_jobs" f1
-python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/male "${hcdir}sambamba_jobs" m2
-python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/female "${hcdir}sambamba_jobs" f2
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/male "${hcdir}"sambamba_jobs m1
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population1/female "${hcdir}"sambamba_jobs f1
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/male "${hcdir}"sambamba_jobs m2
+python "${generatesambamba}"generate_sambamba.py "${hcdir}"population2/female "${hcdir}"sambamba_jobs f2
 
 echo "[...SUBMIT THE SAMBAMBA JOBS...]"
 sh "${hcdir}"sambamba_jobs/submit_m1.sh
