@@ -125,12 +125,12 @@ def read_conifer(coniferfileloc):
             next(conffile)
             for fileline in conffile:
                 filelinedata = fileline.strip().split("\t")
-                
-                if filelinedata[1] not in conifer_calls:
-                    conifer_calls[filelinedata[1]] = {}
-                if filelinedata[8] not in conifer_calls[filelinedata[1]]:
-                    conifer_calls[filelinedata[1]][filelinedata[8]] = []
-                conifer_calls[filelinedata[1]][filelinedata[8]].append(SolveRdCall(filelinedata[1], filelinedata[8], int(filelinedata[9]), int(filelinedata[10]), int(filelinedata[11]), filelinedata[12]))
+
+                if filelinedata[7] not in conifer_calls:
+                    conifer_calls[filelinedata[7]] = {}
+                if filelinedata[1] not in conifer_calls[filelinedata[7]]:
+                    conifer_calls[filelinedata[7]][filelinedata[1]] = []
+                conifer_calls[filelinedata[7]][filelinedata[1]].append(SolveRdCall(filelinedata[7], filelinedata[1], int(filelinedata[2]), int(filelinedata[3]), filelinedata[4], filelinedata[5]))
     except IOError:
         print("Could not read Conifer file")
     finally:
@@ -178,13 +178,13 @@ def read_vargenius(vargeniusfileloc):
             for fileline in vargeniusfile:
                 filelinedata = fileline.strip().split("\t")
 
-                if filelinedata[1] not in vargenius_calls:
-                    vargenius_calls[filelinedata[1]] = {}
-                if filelinedata[14] not in vargenius_calls[filelinedata[1]]:
-                    vargenius_calls[filelinedata[1]][filelinedata[14]] = []
-                vargenius_calls[filelinedata[1]][filelinedata[14]].append(SolveRdCall(filelinedata[1], filelinedata[14], int(filelinedata[15]), int(filelinedata[16]), int(filelinedata[19]), filelinedata[17]))
+                if filelinedata[0] not in vargenius_calls:
+                    vargenius_calls[filelinedata[0]] = {}
+                if filelinedata[13] not in vargenius_calls[filelinedata[0]]:
+                    vargenius_calls[filelinedata[0]][filelinedata[13]] = []
+                vargenius_calls[filelinedata[0]][filelinedata[13]].append(SolveRdCall(filelinedata[0], filelinedata[13], int(filelinedata[14]), int(filelinedata[15]), int(filelinedata[18]), filelinedata[16]))
     except IOError:
-        print("Could not read VareGenius file")
+        print("Could not read VarGenius file")
     finally:
         return vargenius_calls
 
@@ -457,7 +457,7 @@ def count_samples_calls_without_ccrs(solverdcalls):
             for solverdcall in solverdcalls[samplename][chromname]:
                 totalcalls += 1
                 if len(solverdcall.overlapping_ccrs) == 0 and len(solverdcall.overlapping_ccrs_2) == 0:
-                    callcount += 1
+                    nocallcount += 1
                 else:
                     hasccrscount += 1
                     hascallcount += 1

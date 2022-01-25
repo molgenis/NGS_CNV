@@ -17,6 +17,7 @@ def get_params():
     freq_annot_args.add_argument("-s", "--minimum-percentage-samples", type=float, dest="minimum-percentage-samples", default=5.00, help="")
     freq_annot_args.add_argument("-!", "--old-method", action="store_true", dest="old-method", help="Perform the old method of frequency annotation")
     freq_annot_args.add_argument("-f", "--filter-commonxp", action="store_true", dest="filter-commonxp", help="Filter out calls in common xp groups")
+    freq_annot_args.add_argument("-m", "--maximum-size", type=int, dest="maximum-size", default=5000000, help="Maximum call size to use to include in groups")
     return vars(freq_annot_args.parse_args())
 
 
@@ -68,7 +69,7 @@ def set_call_occurrence_frequency(ccrsdata, calloccurrences, numberofsamples):
 # =====
 # =====METHODS FOR IDENTIFYING CALL GROUPS=====
 # =====
-def identify_call_groups(ccrscalls, dupdel):
+def identify_call_groups(ccrscalls, dupdel, maxsize):
     """Identify and return the call groups using the start position.
 
     Parameters
@@ -87,16 +88,17 @@ def identify_call_groups(ccrscalls, dupdel):
     for samplename in ccrscalls:
         for chromname in ccrscalls[samplename]:
             for ccrscall in ccrscalls[samplename][chromname]:
-                if ccrscall.ccrs_call == dupdel:
-                    if chromname not in callgroups:
-                        callgroups[chromname] = {}
-                    if ccrscall.ccrs_start not in callgroups[chromname]:
-                        callgroups[chromname][ccrscall.ccrs_start] = []
-                    callgroups[chromname][ccrscall.ccrs_start].append(ccrscall)
+                if ccrscall.get_call_length() < maxsize:
+                    if ccrscall.ccrs_call == dupdel:
+                        if chromname not in callgroups:
+                            callgroups[chromname] = {}
+                        if ccrscall.ccrs_start not in callgroups[chromname]:
+                            callgroups[chromname][ccrscall.ccrs_start] = []
+                        callgroups[chromname][ccrscall.ccrs_start].append(ccrscall)
     return callgroups
 
 
-def identify_call_groups_2(ccrscalls, dupdel):
+def identify_call_groups_2(ccrscalls, dupdel, maxsize):
     """Identify and return the call groups using the stop position.
 
     Parameters
@@ -115,12 +117,13 @@ def identify_call_groups_2(ccrscalls, dupdel):
     for samplename in ccrscalls:
         for chromname in ccrscalls[samplename]:
             for ccrscall in ccrscalls[samplename][chromname]:
-                if ccrscall.ccrs_call == dupdel:
-                    if chromname not in callgroups:
-                        callgroups[chromname] = {}
-                    if ccrscall.ccrs_end not in callgroups[chromname]:
-                        callgroups[chromname][ccrscall.ccrs_end] = []
-                    callgroups[chromname][ccrscall.ccrs_end].append(ccrscall)
+                if ccrscall.get_call_length() < maxsize:
+                    if ccrscall.ccrs_call == dupdel:
+                        if chromname not in callgroups:
+                            callgroups[chromname] = {}
+                        if ccrscall.ccrs_end not in callgroups[chromname]:
+                            callgroups[chromname][ccrscall.ccrs_end] = []
+                        callgroups[chromname][ccrscall.ccrs_end].append(ccrscall)
     return callgroups
 
 
@@ -390,10 +393,10 @@ def main():
 
     # Determine the call groups based on the same start position
     print("[-DETERMINING CALL GROUPS BY START AND END POSITION-]")
-    dup_start_call_groups = identify_call_groups(ccrs_calls, '+')
-    del_start_call_groups = identify_call_groups(ccrs_calls, '-')
-    dup_stop_call_groups = identify_call_groups_2(ccrs_calls, '+')
-    del_stop_call_groups = identify_call_groups_2(ccrs_calls, '-')
+    dup_start_call_groups = identify_call_groups(ccrs_calls, '+', freq_annot_params["maximum-size"])
+    del_start_call_groups = identify_call_groups(ccrs_calls, '-', freq_annot_params["maximum-size"])
+    dup_stop_call_groups = identify_call_groups_2(ccrs_calls, '+', freq_annot_params["maximum-size"])
+    del_stop_call_groups = identify_call_groups_2(ccrs_calls, '-', freq_annot_params["maximum-size"])
 
     if freq_annot_params["verbose"]:
         print("...Duplication callstart groups...")
