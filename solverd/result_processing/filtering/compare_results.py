@@ -74,6 +74,28 @@ def ccrs_erngene_overlap(ccrscall, erngene):
     return False
 
 
+def add_ern_genes_to_solverdcalls(ccrsdata, erndata):
+    """Determine which ERN genes overlap with CCRS calls."""
+    for samplename in ccrsdata:
+        for chromname in ccrsdata[samplename]:
+            for ccrscall in ccrsdata[samplename][chromname]:
+                get_ern_genes_for_solverdcall(ccrscall, erndata[ccrscall.cnv_chrom])
+
+
+def get_ern_genes_for_solverdcall(ccrscall, ernchromdata):
+    """Get the overlapping ERN genes for a single CCRS call."""
+    for erngene in ernchromdata:
+        if solverd_erngene_overlap(ccrscall, erngene):
+            ccrscall.ern_genes.append(erngene)
+
+
+def solverd_erngene_overlap(ccrscall, erngene):
+    """Determine whether there is an overlap between the CCRS call and Conrad CNV."""
+    if ccrscall.cnv_chrom == erngene.ern_chrom:
+        return ccrscall.cnv_start <= erngene.ern_padded_stop and erngene.ern_padded_start <= ccrscall.cnv_end
+    return False
+
+
 def read_exomedepth(exomedepthfileloc):
     """Read Solve-RD ExomeDepth file.
 
@@ -233,16 +255,25 @@ def main():
     compare_params["outdir"] = compare_params["outdir"]+"/" if not compare_params["outdir"].endswith("/") else compare_params["outdir"]
     outpath = compare_params["outdir"] + compare_params["output-prefix"]
 
+    print("[-READING ERN GENE LIST-]")
+    ern_genes = read_ern_gene_list(compare_params["ern-gene-list"])
+
     # Read the CCRS calls
     print("[-READING CCRS ERN CALLS-]")
     ccrs_data = read_combined_ccrs(compare_params["gatk4-calls"])
     ccrs_header = ccrs_data[0]
     ccrs_calls = ccrs_data[1]
 
+    print("[-ADDING ERN GENES TO GATK4 CALLS-]")
+    add_ern_genes_to_cnvcalls(ccrs_calls, ern_genes)
+
     # Perform the comparison with the ExomeDepth calls
     if compare_params["callstool"] == "exomedepth":
         print("[-READING SOLVE-RD EXOMEDEPTH CALLS-]")
         exd_calls = read_exomedepth(compare_params["calls"])
+
+        print("[-ADDING ERN GENES TO SOLVE-RD EXOMEDEPTH CALLS-]")
+        add_ern_genes_to_solverdcalls(exd_calls, ern_genes)
 
         print("[-COMPARING GATK4 AND SOLVE-RD EXOMEDEPTH CALLS-]")
         compare_gatk_solverd_overlap(ccrs_calls, exd_calls, compare_params["percentage-overlap"], EXOMEDEPTH_TO_GATK4)
@@ -278,6 +309,9 @@ def main():
         print("[-READING SOLVE-RD CONIFER CALLS-]")
         conifer_calls = read_conifer(compare_params["calls"])
 
+        print("[-ADDING ERN GENES TO SOLVE-RD EXOMEDEPTH CALLS-]")
+        add_ern_genes_to_solverdcalls(conifer_calls, ern_genes)
+
         print("[-COMPARING GATK4 AND SOLVE-RD CONIFER CALLS-]")
         compare_gatk_solverd_overlap(ccrs_calls, conifer_calls, compare_params["percentage-overlap"], CONIFER_TO_GATK4)
         unique_gatk_samples = set(ccrs_calls.keys()) - set(conifer_calls.keys())
@@ -302,6 +336,9 @@ def main():
         print("[-READING SOLVE-RD CLINCNV CALLS-]")
         clincnv_calls = read_clincnv(compare_params["calls"])
 
+        print("[-ADDING ERN GENES TO SOLVE-RD EXOMEDEPTH CALLS-]")
+        add_ern_genes_to_solverdcalls(clincnv_calls, ern_genes)
+
         print("[-COMPARING GATK4 AND SOLVE-RD CLINCNV CALLS-]")
         compare_gatk_solverd_overlap(ccrs_calls, clincnv_calls, compare_params["percentage-overlap"], CLINCNV_TO_GATK4)
         unique_gatk_samples = set(ccrs_calls.keys()) - set(clincnv_calls.keys())
@@ -325,6 +362,9 @@ def main():
     if compare_params["callstool"] == "vargenius":
         print("[-READING SOLVE-RD VARGENIUS CALLS-]")
         vargenius_calls = read_vargenius(compare_params["calls"])
+
+        print("[-ADDING ERN GENES TO SOLVE-RD EXOMEDEPTH CALLS-]")
+        add_ern_genes_to_solverdcalls(vargenius_calls, ern_genes)
 
         print("[-COMPARING GATK4 CALLS AND SOLVE-RD VARGENIUS CALLS-]")
         compare_gatk_solverd_overlap(ccrs_calls, vargenius_calls, compare_params["percentage-overlap"], VARGENIUS_TO_GATK)
@@ -388,16 +428,16 @@ def write_overlapping_calls(outfileloc, solverdcallswithccrs, labelname):
     file_written = False
     try:
         with open(outfileloc, 'w') as outfile:
-            outfile.write(f"Sample\t{labelname}_CNV\t{labelname}_Call\tCCRS_CNV\tCCRS_Call\n")
+            outfile.write(f"Sample\t{labelname}_CNV\t{labelname}_Call\t{labelname}_ERNGenes\tCCRS_CNV\tCCRS_Call\tCCRS_ERNGenes\n")
             for samplename in solverdcallswithccrs:
                 for chromname in solverdcallswithccrs[samplename]:
                     for exdcall in solverdcallswithccrs[samplename][chromname]:
                         if len(exdcall.overlapping_ccrs) > 0:
                             for ccrscall in exdcall.overlapping_ccrs:
-                                outfile.write(f"{samplename}\t{exdcall.get_region_string()}\t{exdcall.cnv_call}\t{ccrscall.get_region_string()}\t{ccrscall.ccrs_call}\n")
+                                outfile.write(f"{samplename}\t{exdcall.get_region_string()}\t{exdcall.cnv_call}\t" +",".join([x.ern_name for x in exdcall.ern_genes])+ f"\t{ccrscall.get_region_string()}\t{ccrscall.ccrs_call}\t" +",".join([x.ern_name for x in ccrscall.ern_genes])+ "\n")
                         if len(exdcall.overlapping_ccrs_2) > 0:
                             for ccrscall in exdcall.overlapping_ccrs_2:
-                                outfile.write(f"{samplename}\t{exdcall.get_region_string()}\t{exdcall.cnv_call}\t{ccrscall.get_region_string()}\t{ccrscall.ccrs_call}\n")
+                                outfile.write(f"{samplename}\t{exdcall.get_region_string()}\t{exdcall.cnv_call}\t" +",".join([x.ern_name for x in exdcall.ern_genes])+ f"\t{ccrscall.get_region_string()}\t{ccrscall.ccrs_call}\t" +",".join([x.ern_name for x in ccrscall.ern_genes])+ "\n")
         file_written = True
     except IOError:
         print("Could not write calls to file")
