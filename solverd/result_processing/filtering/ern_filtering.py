@@ -25,7 +25,13 @@ def get_params():
 
 
 def read_samples_to_ern(samplestoernfileloc):
-    """Read the samples to ERN file."""
+    """Read the samples to ERN file.
+
+    Parameters
+    ----------
+    samplestoernfileloc : str
+        Path to the samples to ern file
+    """
     samples_to_ern = {}
     try:
         with open(samplestoernfileloc, 'r') as samplestoernfile:
@@ -39,7 +45,18 @@ def read_samples_to_ern(samplestoernfileloc):
 
 
 def read_ern_file(ernfileloc):
-    """Read the ERN gene list."""
+    """Read the ERN gene list.
+
+    Parameters
+    ----------
+    ernfileloc : str
+        Path to the ERN genelist
+
+    Returns
+    -------
+    ern_data : dict
+        ERN genes per chromosome
+    """
     ern_data = {}
     try:
         with open(ernfileloc, 'r') as ernfile:
@@ -146,7 +163,13 @@ def write_removed_ccrs_calls(outfileloc, ccrsdata, samplenames):
 
 
 def determine_ccrs_combinederd_overlaps(ccrsdata, erndata):
-    """Determine which ERN genes of the combined ERN gene lists overlap with CCRS calls."""
+    """Determine which ERN genes of the combined ERN gene lists overlap with CCRS calls.
+
+    Parameters
+    ----------
+    ccrsdata : dict
+    erndata : dict
+    """
     for samplename in ccrsdata:
         for chromname in ccrsdata[samplename]:
             for ccrscall in ccrsdata[samplename][chromname]:

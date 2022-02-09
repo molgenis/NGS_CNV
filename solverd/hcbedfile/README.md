@@ -1,10 +1,4 @@
-# scripts
-	[generate_sambamba.py]
-	[make_hc_scripts.py]
-	[make_hcbedfile_part1.sh]
-	[make_hcbedfile_part2.sh]
-	[make_population_sample_list.py]
-
+# HC BED file scripts
 
 ## generate_sambamba.py
 	Script that generates sambamba jobs for a set of BAM files.
@@ -27,9 +21,7 @@
 ## make_population_sample_list.py
 	Script to create a BAM list file for the F1, F2, M1 or M2 population
 
-========================================================================================================================================================================================================
-
-About the samples list file:
+## About the samples list file:
 	To make the High Confident BED file, two male and female sample populations of equal sizes are required.
 	This samples list file should contain two columns separated by '\t'.
 	The first column should be the full path to the BAM files.

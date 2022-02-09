@@ -11,6 +11,7 @@ ERN_TO_FILE = {"ERN GENTURIS": "ERN-GENTURIS.2021-06-03.230genes.HGNC.CHR.Start.
 
 
 def get_params():
+    """Define, receive and return set CLI parameter values."""
     erncombine_args = argparse.ArgumentParser()
     erncombine_args.add_argument("-c", "--ccrs-dir", type=str, required=True, dest="ccrs-dir", help="Path to directory with combined CCRS files")
     erncombine_args.add_argument("-o", "--outdir", type=str, required=True, dest="outdir", help="Path to output directory")
@@ -70,14 +71,14 @@ def read_samples_to_ern(infileloc):
 
 
 def get_calls_per_ern(ernsamples, ccrscalls):
-    """Get the actual.
+    """Get the actual calls per ERN.
 
     Parameters
     ----------
     ernsamples : dict
         Sample names per ERN
     ccrscalls : dict
-        
+        CCRS calls per sample, per chrom
     """
     ern_calls = {}
     for ernname in ernsamples:
@@ -93,6 +94,12 @@ def write_ern_ccrs_calls(outdir, ccrsheader, erncalls):
 
     Parameters
     ----------
+    outdir : str
+        Path to output directory
+    ccrsheader : str
+        Header of the read combined CCRS file
+    erncalls : dict
+        CCRS calls per ERN
     """
     for ernname in erncalls:
         wrote_file = write_erncalls_file(f"{outdir}{ernname}_calls.txt", ccrsheader, erncalls[ernname])
@@ -100,7 +107,17 @@ def write_ern_ccrs_calls(outdir, ccrsheader, erncalls):
 
 
 def write_erncalls_file(outfileloc, ccrsheader, ernccrscalls):
-    """Write CCRS calls for a single ERN."""
+    """Write CCRS calls for a single ERN.
+
+    Parameters
+    ----------
+    outfileloc : str
+        Path to write output file to
+    ccrsheader : str
+        Header of the read combined CCRS file
+    ernccrscalls : dict
+        CCRS calls a single ERN saved per sample, per chrom
+    """
     samplenames = list(ernccrscalls.keys())
     samplenames.sort()
     file_written = False
@@ -120,6 +137,7 @@ def write_erncalls_file(outfileloc, ccrsheader, ernccrscalls):
 
 
 def main():
+    """Do the main work."""
     erncombine_params = get_params()
     # ccrs_files = [x for x in os.listdir(erncombine_params["ccrs-dir"]) if x.endswith(".called.seg")]
 

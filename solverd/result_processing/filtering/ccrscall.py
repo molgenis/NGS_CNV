@@ -26,6 +26,7 @@ class CcrsCall:
         self.callgroup_common = False
 
     def get_call_length(self):
+        """Return the length of the call."""
         return self.ccrs_end - self.ccrs_start
 
     def get_call_translation(self):
@@ -56,10 +57,11 @@ class CcrsCall:
         return conrad_genenames
 
     def get_region_string(self):
-        """Return the CCRS call as a genomic region string."""
+        """Return the CCRS call as a genomic region string (i.e. 1:100000-1000000)."""
         return f"{self.ccrs_chrom}:{self.ccrs_start}-{self.ccrs_end}"
 
     def get_region_string_2(self):
+        """Return the CCRS call as a genomic region string with comma formatting (i,e.: 1:100,000-1,000,000)."""
         return self.ccrs_chrom + ":" + "{:,}".format(self.ccrs_start) + "-" + "{:,}".format(self.ccrs_end)
 
     def get_conrad_cnv_strings(self):

@@ -8,7 +8,6 @@ __Required parameters__
 * [-d / --indir]: Path to directory containing multiple slurm jobs .out files
 * [-o / --outfile]: Path to write combined job data file to.
 
-
 __Usage__
 ```
 python obtain_job_data.py \
@@ -23,7 +22,6 @@ Is used to calculate the average, median and stdev runtime for a job in seconds,
 __Required parameters__
 * [-i / --infile]: Path to the combined jobout file created with `obtain_job_data.py`
 * [-j / --jobname]: Label to use for when displaying the avg, med and stdev runtimes
-
 
 __Usage__
 ```

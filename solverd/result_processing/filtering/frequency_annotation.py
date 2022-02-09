@@ -8,7 +8,7 @@ def get_params():
     """Define, receive and return set CLI parameter values."""
     freq_annot_args = argparse.ArgumentParser()
     freq_annot_args.add_argument("-i", "--infile", type=str, required=True, dest="infile", help="Path to input file")
-    freq_annot_args.add_argument("-n", "--numofsamples", type=int, dest="numofsamples", required=True, help="Total number of process samples for the batch")
+    freq_annot_args.add_argument("-n", "--numofsamples", type=int, dest="numofsamples", required=True, help="Total number of processed samples for the batch")
     freq_annot_args.add_argument("-o", "--outdir", type=str, required=True, dest="outdir", help="Path to output directory")
     freq_annot_args.add_argument("-op", "--outprefix", type=str, required=True, dest="outprefix", help="")
     freq_annot_args.add_argument("-p", "--percent-overlap", type=float, dest="percent-overlap", default=80.0, help="")
