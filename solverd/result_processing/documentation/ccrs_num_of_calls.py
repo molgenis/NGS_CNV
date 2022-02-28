@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 
 def read_ccrs_calls(ccrsfileloc):

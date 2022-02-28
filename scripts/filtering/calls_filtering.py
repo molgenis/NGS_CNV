@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def filter_ccrs_calls(infileloc, outfileloc, filterneutrals, filtersize=0):
     """Filter CallCopyRatioSegments file and write filtered data to an output file.
 

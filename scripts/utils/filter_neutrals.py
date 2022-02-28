@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def filter_neutrals(infileloc, outfileloc):
     try:
         outfile = open(outfile, 'w')

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def fix_array_cnv_notation(infileloc, outfileloc):
     try:
         infile = open(infileloc, 'r')

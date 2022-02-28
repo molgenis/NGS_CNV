@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class CcrsEntry:
     def __init__(self, cnv_chrom, cnv_start, cnv_end, cnv_npcr, cnv_mlcr):
         self.chrom = cnv_chrom

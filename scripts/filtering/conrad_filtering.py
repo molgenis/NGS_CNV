@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from classes.conradcnv import ConradCnv
 from classes.exon import Exon
 from classes.gatkcall import GatkCall

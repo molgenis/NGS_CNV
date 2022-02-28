@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class Exon:
     def __init__(self, chrom, startpos, endpos, genename):
         self.exon_chrom = chrom

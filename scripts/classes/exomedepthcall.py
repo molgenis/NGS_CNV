@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ExomeDepthCall:
     def __init__(self, samplename, pseudosample, cnvstartp, cnvendp, cnvcall, cnvexonnum, cnvstart, cnvend, cnvchrom, cnvid, cnvbf, cnvreadexp, cnvreadobs, cnvreadratio, cnvconrad):
         self.cnv_sample = samplename

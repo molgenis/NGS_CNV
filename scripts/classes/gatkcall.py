@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class GatkCall:
     def __init__(self, samplename, gchrom, gstart, gend, gcall, gsize, acnv, gcallres, gclass, nexon, nprobe, genenames, callline):
         self.samplename = samplename

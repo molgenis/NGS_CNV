@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def get_gatk_region(gatkregionstr):
     gatk_chrom = gatkregionstr.split(":")[0]
     gatk_start = int(gatkregionstr.split(":")[1].split("-")[0])

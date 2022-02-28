@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ConradCnv:
     def __init__(self, cchrom, cstart, cend, cwidth, cstrand, cname, lindex):
         self.conrad_chrom = cchrom

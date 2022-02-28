@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from classes.gatkcall import GatkCall
 
 def read_dualbed_data(infileloc):

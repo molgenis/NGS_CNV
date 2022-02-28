@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 from ccrscall import CcrsCall
 from gnomadentry import GnomadEntry

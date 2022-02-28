@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def generate_classification_totals(classificationdata, tpperacnv):
     """Determine and return the totals for TP, FP, ANI, WNI, AWNI.
 

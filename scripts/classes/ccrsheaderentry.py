@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class CcrsHeaderEntry:
     def __init__(self):
         self.entry_data = {}

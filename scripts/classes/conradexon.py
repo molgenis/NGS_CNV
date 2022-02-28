@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ConradExon:
     def __init__(self, echrom, estart, eend, egenename):
         self.exon_chrom = echrom

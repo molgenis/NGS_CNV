@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def get_total_calls(infileloc, onlyna=False):
     """Simply determine and return the number of GATK4 CNV calls in the file.
 

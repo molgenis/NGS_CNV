@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class SolveRdCall:
     def __init__(self, ename, cnvchrom, cnvstart, cnvend, cnvlen, cnvtype):
         self.sample_name = ename

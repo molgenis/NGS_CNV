@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def determine_arraycnvs_found(infileloc, arraycnvs):
     """Determine and return which array CNVs have been found.
 

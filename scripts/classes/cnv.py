@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class Cnv:
     def __init__(self, samplename, samplepseudo, chrom, startpos, endpos, npcr, mlcr, call):
         self.cnv_sample = samplename

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def determine_dualbed_acnvs_found(infileloc, arraycnvs, dualbedlabel):
     """Determine and return which array CNVs have been found.
 

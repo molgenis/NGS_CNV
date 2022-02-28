@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def read_conifer_data(coniferfileloc, sampledata, exondata, probedata):
     conifer_data = {}
     try:

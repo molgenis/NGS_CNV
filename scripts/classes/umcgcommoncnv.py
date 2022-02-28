@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class UmcgCommonCnv:
     def __init__(self, chrom, startpos, endpos, nameid, score, strand, thickstart, thickend, rgbstr):
         self.cnvchrom = chrom

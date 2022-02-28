@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class FpResult:
     def __init__(self, samplename, gatkcnv, gatkcall, gatksize, classification, exonsnum, probesnum):
         self.sample_name = samplename

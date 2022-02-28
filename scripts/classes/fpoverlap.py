@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class FpOverlap:
     def __init__(self, fpregion):
         self.region = fpregion

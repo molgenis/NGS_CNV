@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def write_output_file(outfilepath, headerline, intervaldata):
     """Write intervals overlapping with a genomic region to an output file.
 

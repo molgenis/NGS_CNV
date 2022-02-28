@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ArrayCnv:
     def __init__(self, samplename, chrom, startpos, endpos, cnvcall, cnvsize, numprobes, numgenes, cnvclass):
         self.cnv_sample = samplename

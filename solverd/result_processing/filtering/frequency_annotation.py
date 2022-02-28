@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import statistics
 from ccrscall import CcrsCall

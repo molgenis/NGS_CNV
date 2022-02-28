@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class CcrsFile:
     def __init__(self, fileloc):
         self.ccrs_los = fileloc

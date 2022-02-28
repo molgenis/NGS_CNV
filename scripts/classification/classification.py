@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def add_probes(cnv, probes):
     """Identify probes overlapping with the the CNV call.
 

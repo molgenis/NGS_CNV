@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from classes.fpoverlap import FpOverlap
 import shared_methods.shared_methods as smsm
 

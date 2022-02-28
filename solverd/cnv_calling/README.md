@@ -1,4 +1,5 @@
-# CNV calling scripts
+# Solve-RD CNV calling scripts
+The scripts listed here are in order of execution during the CNV calling process on the Freeze1 Solve-RD data.
 
 __Used abbreviations__
 * CAC: CollectAllelicCounts

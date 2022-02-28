@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def get_arraycnv_bedregions(bedfiledata, arraycnvregion):
     """Select and return BED file regions overlapping with an array CNV region.
 

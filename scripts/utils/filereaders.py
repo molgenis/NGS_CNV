@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from classes.arraycnv import ArrayCnv
 from classes.exon import Exon
 from classes.probe import Probe

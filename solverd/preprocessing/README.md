@@ -14,10 +14,14 @@ __Required parameters__
 * [-o / --outfile]: Path to write `master_bed_to_bam.txt` to
 * [-r / --rd3data]: RD3 Experiment table data
 
-
-
-## make_master_batches.sh
-This small script divides the BAM files per BED file using grep commands. In this, and other documents, I generally refer to each BED file as a batch (as each BED file has a batch of samples) followed by a number. The batch number is based on the order of the BED files in the RDConnect file. So the first file would be named batch1, the second batch2, etc. Afterwards, I manually made the `batch_to_kit.txt` file that links the batch number to the kit name associated with the BED file.
+__Usage__
+```
+python link_bed_to_bam.py \
+	-b /path/to/master_bamlist.txt \
+	-k /path/to/RDConnect.csv \
+	-o /path/to/rd3_data/master_bed_to_bam.txt \
+	-r /path/to/rd3_data/rd3_experiment.txt
+```
 
 
 ## link_sex_to_bam.py
@@ -41,25 +45,41 @@ python link_sex_to_bam.py \
 ```
 
 
-## determine_ud_sexes.py
-Can be used to determine the sexes of the samples that have been labelled UD as claimed sex. To determine the sex of the UD samples, this script requires the ClusterWES coverage files. It collects all X-chromosome coverage values and divides the median by the median of autosomal coverage. If the resulting ratio is smaller than 0.7 the UD sample will be labelled ‘M’ for male. If the ratio is between 0.85 and 1.3 the UD sample will be labelled ‘F’ for female. In all other cases, the UD sample will remain UD. The minimum threshold of 0.85 was chosen as this is also used by the inhouse pipeline. This script requires two command line values:
-sys.argv[1]: Table linking sample to sex
-sys.argv[2]: Directory with normalized.coverage.txt files
+## make_master_batches.sh
+This small script divides the BAM files per BED file using grep commands. In this, and other documents, I generally refer to each BED file as a batch (as each BED file has a batch of samples) followed by a number. The batch number is based on the order of the BED files in the RDConnect file. So the first file would be named batch1, the second batch2, etc. Afterwards, I manually made the `batch_to_kit.txt` file that links the batch number to the kit name associated with the BED file.
 
 
-## fm_combined_clusters.py
-Makes male and female panel of normals for each combined S4 ClusterWES cluster, per batch. First, S4 ClusterWES clusters were combined so each cluster had at least 200 samples. 
+## make_lns.py
+This script makes a shell script that links, via softlinks (ln -s), BAM and BAI sample files for a single batch to a specified directory.
 
 __Required parameters__
-* [-b / --bam-to-sex]: Path to `sex_to_bam.txt` file created by link_sex_to_bam.py
-* [-c / --combined-s4]: Path to combined S4 ClusterWES cluster file
-* [-o / --outdir]: Path to write the PoN job scripts to
-* [-p / --pon-out]: Path the job should write the PanelOfNormals file to
-* [-r / --read-counts-dir]: Path to directory with read count files created by CollectReadCounts
+* sys.argv[1]: Path to a batch sample file listing made by `make_master_batches.sh`
+* sys.argv[2]: Path to write the linking script to
+* sys.argv[3]: Path to the directory the resulting linking script should place the BAM and BAI files
 
 __Usage__
 ```
-python fm_combined_clusters.py
-	- 
-	- 
+python make_lns.py \
+	/path/to/master_batch1.txt \
+	/path/to/lnsbatches/lns_batch1.sh \
+	/path/to/samples/batch1/
+```
+
+
+## Execute *.sh created by make_lns.py
+Simply execute these scripts made by `make_lns.py` to link samples to batch directories.
+
+
+## determine_ud_sexes.py
+Can be used to determine the sexes of the samples that have been labelled UD as claimed sex. To determine the sex of the UD samples, this script requires the ClusterWES coverage files. It collects all X-chromosome coverage values and divides the median by the median of autosomal coverage. If the resulting ratio is smaller than 0.7 the UD sample will be labelled ‘M’ for male. If the ratio is between 0.85 and 1.3 the UD sample will be labelled ‘F’ for female. In all other cases, the UD sample will remain UD. The minimum threshold of 0.85 was chosen as this is also used by the inhouse pipeline.
+
+__Required parameters__
+* sys.argv[1]: Table linking sample to sex
+* sys.argv[2]: Directory with normalized.coverage.txt files
+
+__Usage__
+```
+python determine_ud_sexes.py \
+	/path/to/bam_to_sex.txt \
+	/path/to/solverd/normalized_coverage/
 ```

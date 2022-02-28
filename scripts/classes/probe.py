@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class Probe:
     def __init__(self, chrom, startpos, endpos):
         self.probe_chrom = chrom

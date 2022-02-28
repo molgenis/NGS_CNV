@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class FpSummary:
     def __init__(self, classification, callsnum, lenavg, lenmed, exonavg, exonmed, probeavg, probemed):
         self.classification = classification

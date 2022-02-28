@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 
 
@@ -5,9 +6,9 @@ import argparse
 def get_params():
     """Define, receive and return parameter values"""
     dupdel_args = argparse.ArgumentParser()
-    dupdel_args.add_argument("-i", "--infile", type=str, required=True, dest="infile", help="")
-    dupdel_args.add_argument("-o", "--outdir", type=str, required=True, dest="outdir", help="")
-    dupdel_args.add_argument("-p", "--prefix", type=str, required=True, dest="prefix", help="")
+    dupdel_args.add_argument("-i", "--infile", type=str, required=True, dest="infile", help="Path to file with number of duplication and deletion calls")
+    dupdel_args.add_argument("-o", "--outdir", type=str, required=True, dest="outdir", help="Path to write output files to")
+    dupdel_args.add_argument("-p", "--prefix", type=str, required=True, dest="prefix", help="Prefix to use for output files")
     dupdel_args.add_argument("-m1", "--min-duplication-outlier", type=int, required=True, dest="min-duplication-outlier")
     dupdel_args.add_argument("-m2", "--min-deletion-outlier", type=int, required=True, dest="min-deletion-outlier")
     return vars(dupdel_args.parse_args())

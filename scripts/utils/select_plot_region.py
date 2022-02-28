@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def parse_regions(genomicregions, paddingtoadd):
     """Parse one or more genomic regions and return the parsed data.
 

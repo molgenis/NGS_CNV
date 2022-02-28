@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def filter_intervallist(intervalfile, outputfile):
     """Filter a provided interval list file to remove X and Y chromosome entries.
 

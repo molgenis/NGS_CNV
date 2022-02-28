@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import argparse
 
@@ -330,13 +331,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# USAGE:
-# python make_hc_scripts.py
-# -b /groups/umcg-solve-rd/tmp01/resources/BED_KITS/hsapiens.hs37d5_PRAGUE.Custom.Target.primaryTarget.merge.bed
-# -o 
-# -p /groups/umcg-solve-rd/tmp01/umcg-mbeukers/hc_bedfiles
-# -s 
-# -u /groups/umcg-gdio/tmp01/umcg-mbeukers/umcu_exomedepth/scripts
-# -v /groups/umcg-gdio/tmp01/umcg-mbeukers/umcu_exomedepth/scripts/exomedepth

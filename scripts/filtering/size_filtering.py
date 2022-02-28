@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def determine_header_field(headerfields, columnname):
     """Identifies the index for the column name in the header.
 

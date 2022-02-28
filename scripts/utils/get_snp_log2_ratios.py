@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def collect_allelic_log2_values(allelic_data, interval_data, outfilepath):
     """Collect log2 values for the allelic positions and write results to an output file.
     

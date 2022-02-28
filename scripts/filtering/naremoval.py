@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 def remove_nas(infileloc, outfileloc):
     """Remove not overlapping with an array CNV from a classifications file.
 

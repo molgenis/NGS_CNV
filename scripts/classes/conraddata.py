@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ConradData:
     def __init__(self, cnvfileloc, exonfileloc, exomefileloc):
         self.cnv_file = cnvfileloc

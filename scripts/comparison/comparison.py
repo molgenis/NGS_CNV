@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Import generate totals scripts
 import generate_totals.classifications as gtc
 import generate_totals.array_cnvs as gtac

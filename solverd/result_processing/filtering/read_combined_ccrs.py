@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from ccrscall import CcrsCall
 
 def read_combined_ccrs(ccrsfileloc):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 from ccrscall import CcrsCall
 from read_combined_ccrs import read_combined_ccrs

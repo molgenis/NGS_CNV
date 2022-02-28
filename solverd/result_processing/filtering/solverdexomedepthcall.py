@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class SolveRdExomeDepthCall:
     def __init__(self, ename, cnvchrom, cnvstart, cnvend, cnvlen, cnvtype, cnvnexons):
         self.sample_name = ename

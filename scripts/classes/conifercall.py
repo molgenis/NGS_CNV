@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ConiferCall:
     def __init__(self, samplepseudo, samplename, cnvchrom, cnvstart, cnvend, callresult):
         self.cnv_sample = samplename

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 class ConradCnv:
     def __init__(self, cnvchrom, cnvstart, cnvend, cnvwidth, cnvstrand, cnvnames, cnvtype, cnvoccurrence, cnvfrequency):
         self.cnv_chrom = cnvchrom
